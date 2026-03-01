@@ -21,7 +21,8 @@ const basePath = getBasePath();
 
 function injectNavigation() {
     // Determine active links based on current path
-    const isIndex = window.location.pathname.endsWith('index.html') && !window.location.pathname.includes('/projects/');
+    const pathname = window.location.pathname;
+    const isIndex = (pathname.endsWith('index.html') || pathname.endsWith('/') || pathname === '') && !pathname.includes('/projects/');
     const isWork = window.location.pathname.endsWith('work.html');
     const isPlay = window.location.pathname.endsWith('play.html');
     const isResearch = window.location.pathname.endsWith('research.html');
@@ -33,11 +34,11 @@ function injectNavigation() {
 
     // Default brand to active link styling, otherwise regular style
     const brandClass = isIndex ? 'active-link' : 'brand';
+    const inlineStyle = isIndex ? 'opacity: 0;' : '';
 
     const navHTML = `
-        <nav class="main-nav">
+        <nav class="main-nav" style="${inlineStyle}">
             <a href="${basePath}index.html" class="${brandClass}">Pranav Chaparala</a>
-            <a href="${basePath}work.html" class="${isWork ? 'active-link' : ''}">Work</a>
             <a href="${basePath}play.html" class="${isPlay ? 'active-link' : ''}">Play</a>
             <a href="${basePath}research.html" class="${isResearch ? 'active-link' : ''}">Research</a>
             <a href="${basePath}about.html" class="${isAbout ? 'active-link' : ''}">About</a>
@@ -83,63 +84,278 @@ function setupTransitions() {
 }
 
 function initWorksTrack() {
-    const track = document.getElementById('track');
-    if (!track) return;
+    const stage = document.getElementById('stage');
+    if (!stage) return;
 
-    track.innerHTML = '';
+    // Ensure GSAP is loaded before attempting animation
+    if (typeof gsap === 'undefined') return;
 
-    worksData.forEach(work => {
-        const link = document.createElement('a');
-        link.href = basePath + work.link;
-        link.style.display = 'contents';
+    const bgBlur = document.getElementById('bg-blur');
+    const bgImg = document.getElementById('bg-img');
 
-        const img = document.createElement('img');
-        img.src = basePath + 'covers/' + work.img;
-        img.className = 'project-img';
+    let blurEnabled = false;
+    const VW = window.innerWidth;
+    const VH = window.innerHeight;
 
-        link.appendChild(img);
-        track.appendChild(link);
+    const N = worksData.length;
+    const GAP = 0;
+
+    // Responsive sizing helpers based on viewport
+    const isMobile = VW <= 768;
+    const isTablet = VW <= 1024;
+
+    let pWidth = 255, lWidth = 390;
+    if (isMobile) { pWidth = 153; lWidth = 234; }
+    else if (isTablet) { pWidth = 170; lWidth = 260; }
+
+    const sh = i => i % 2 === 0 ? 'p' : 'l';
+    const w = i => sh(i) === 'p' ? pWidth : lWidth;
+
+    const cycleW = worksData.reduce((sum, _, i) => sum + w(i) + GAP, 0);
+    const numReps = Math.ceil((VW * 3) / cycleW) + 2;
+
+    const cards = [];
+    for (let r = 0; r < numReps; r++) {
+        worksData.forEach((work, i) => {
+            const gi = r * N + i;
+            const card = document.createElement('div');
+            card.className = `card ${sh(gi)}`;
+            card.innerHTML = `<div class="pan"><img src="${basePath + 'covers/' + work.img}" alt="${work.title}" class="project-img"></div>`;
+            card.dataset.workIdx = i;
+            // Add a global lock flag at the top of your function ideally, but we can stick it onto the parent scope for the carousel. Actually let's use document.body class for global lock.
+
+            card.addEventListener('mouseenter', () => {
+                if (!blurEnabled || document.body.classList.contains('project-opening')) return;
+                bgImg.src = `${basePath + 'covers/' + work.img}`;
+                bgBlur.style.opacity = '0.4';
+                cards.forEach(c => {
+                    if (c !== card) c.classList.add('dimmed');
+                });
+            });
+            card.addEventListener('mouseleave', () => {
+                if (!blurEnabled || document.body.classList.contains('project-opening')) return;
+                bgBlur.style.opacity = '0';
+                cards.forEach(c => c.classList.remove('dimmed'));
+            });
+            card.addEventListener('click', (e) => {
+                if (document.body.classList.contains('project-opening')) return;
+                const ci = cards.indexOf(card);
+                vel = 0; // stop scroll momentum
+                const targetOffset = VW / 2 - (cardX[ci] + w(ci % N) / 2);
+                let proxy = { o: offset };
+
+                gsap.to(proxy, {
+                    o: targetOffset,
+                    duration: 0.7,
+                    ease: 'power3.out',
+                    onUpdate: () => { offset = proxy.o; },
+                    onComplete: () => {
+                        // Lock the hover state securely
+                        document.body.classList.add('project-opening');
+                        cards.forEach(c => {
+                            if (c !== card) {
+                                c.classList.add('dimmed');
+                            } else {
+                                c.classList.remove('dimmed');
+                                c.classList.add('clicked-active');
+                                // Force 100% opacity natively on the container and the pan internal
+                                c.style.setProperty('opacity', '1', 'important');
+                                const pan = c.querySelector('.pan');
+                                if (pan) pan.style.setProperty('opacity', '1', 'important');
+                            }
+                        });
+
+                        // After centered, short delay before triggering route
+                        setTimeout(() => {
+                            document.body.classList.remove('page-loaded');
+                            document.body.classList.add('page-leaving');
+                            setTimeout(() => {
+                                window.location.href = basePath + work.link;
+                            }, 600); // UI transition duration
+                        }, 200); // Short delay
+                    }
+                });
+            });
+            stage.appendChild(card);
+            cards.push(card);
+        });
+    }
+
+    let x = 0;
+    const cardX = cards.map((c, i) => {
+        const cx = x;
+        x += w(i % N) + GAP;
+        return cx;
     });
+    const totalW = x - GAP;
 
-    const imgs = Array.from(track.children);
-    // Infinite loop clones
-    imgs.forEach(img => track.appendChild(img.cloneNode(true)));
-    imgs.forEach(img => track.appendChild(img.cloneNode(true)));
+    const midRep = Math.floor(numReps / 2);
+    const heroIdx = midRep * N + (N - 1);
+    const heroCard = cards[heroIdx];
 
-    let scrollX = 0;
-    let velocity = 0;
-    const centerX = window.innerWidth / 2;
+    const heroMid = cardX[heroIdx] + w(heroIdx % N) / 2;
+    let offset = VW / 2 - heroMid;
 
-    window.addEventListener('wheel', (e) => {
-        velocity += e.deltaY * 0.15;
-    });
+    function applyPositions() {
+        cards.forEach((c, i) => {
+            const cx = cardX[i] + offset;
+            c.style.left = cx + 'px';
+            const pan = c.querySelector('.pan');
+            if (pan) pan.style.transform = `translateX(${(cx + w(i % N) / 2 - VW / 2) * 0.08}px)`;
+        });
+    }
+    applyPositions();
 
-    function animate() {
-        scrollX -= velocity;
-        velocity *= 0.9;
+    heroCard.style.opacity = '1';
 
-        const limit = track.scrollWidth / 3;
-        if (scrollX <= -limit) scrollX = 0;
-        if (scrollX > 0) scrollX = -limit;
+    const overlay = document.createElement('div');
+    overlay.id = 'overlay';
+    document.body.appendChild(overlay);
 
-        track.style.transform = `translateX(${scrollX}px)`;
+    const titleEl = document.createElement('div');
+    titleEl.id = 'active-project-title';
+    document.body.appendChild(titleEl);
 
-        const currentImgs = track.querySelectorAll('img');
-        currentImgs.forEach(img => {
-            const rect = img.getBoundingClientRect();
-            const imgCenter = rect.left + rect.width / 2;
+    let vel = 0;
+    let spinning = false;
 
-            const distance = (imgCenter - centerX) / centerX;
-            const absDistance = Math.abs(distance);
-            const scale = 1 + (0.1 * (1 - Math.min(absDistance, 1)));
-            const parallax = distance * 30;
+    function revealCarousel(instant = false) {
+        if (overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay);
 
-            img.style.transform = `scale(${scale}) translateX(${parallax}px)`;
+        const sorted = cards
+            .filter(c => c !== heroCard)
+            .sort((a, b) => {
+                const ai = cards.indexOf(a);
+                const bi = cards.indexOf(b);
+                return Math.abs(ai - heroIdx) - Math.abs(bi - heroIdx);
+            });
+
+        if (instant) {
+            gsap.set(cards, { opacity: 1 });
+            spinning = true;
+            blurEnabled = true;
+        } else {
+            gsap.to(sorted, {
+                opacity: 1, duration: 0.6, stagger: 0.03, ease: 'power2.out',
+                onComplete() {
+                    spinning = true;
+                    blurEnabled = true;
+                }
+            });
+        }
+
+        const mainNav = document.querySelector('.main-nav');
+        if (mainNav) gsap.to(mainNav, { opacity: 1, duration: instant ? 0 : 0.8 });
+        const footer = document.querySelector('footer');
+        if (footer) gsap.to(footer, { opacity: 1, duration: instant ? 0 : 0.8 });
+
+        // Hide the page content dissolve animation so it doesn't conflict
+        const content = document.querySelector('.page-content');
+        if (content) content.style.opacity = '1';
+    }
+
+    const hasVisited = sessionStorage.getItem('portfolio_visited');
+
+    if (!hasVisited) {
+        sessionStorage.setItem('portfolio_visited', 'true');
+
+        const fakes = worksData.map((work, i) => {
+            const f = document.createElement('div');
+            f.className = `fake ${sh(i)}`;
+            f.style.zIndex = 100 + i;
+            if (isMobile) {
+                f.style.width = sh(i) === 'p' ? '153px' : '234px';
+                f.style.height = sh(i) === 'p' ? '216px' : '153px';
+                f.style.marginLeft = sh(i) === 'p' ? '-76px' : '-117px';
+                f.style.marginTop = sh(i) === 'p' ? '-108px' : '-76px';
+            } else if (isTablet) {
+                f.style.width = sh(i) === 'p' ? '170px' : '260px';
+                f.style.height = sh(i) === 'p' ? '240px' : '170px';
+                f.style.marginLeft = sh(i) === 'p' ? '-85px' : '-130px';
+                f.style.marginTop = sh(i) === 'p' ? '-120px' : '-85px';
+            }
+
+            f.innerHTML = `<div class="pan"><img src="${basePath + 'covers/' + work.img}" alt="${work.title}"></div>`;
+            overlay.appendChild(f);
+            return f;
         });
 
-        requestAnimationFrame(animate);
+        const tl = gsap.timeline({ onComplete: () => revealCarousel(false) });
+        const STEP = 0.20, IN = 0.50, HOLD = 0.10, OUT = 0.28;
+
+        fakes.forEach((f, i) => {
+            const t = i * STEP;
+            tl.to(f, { scale: 1.02, duration: IN, ease: 'power3.out' }, t)
+                .to(f, { scale: 1.0, duration: OUT, ease: 'power2.inOut' }, t + IN + HOLD);
+        });
+
+        const seqEnd = (N - 1) * STEP + IN + HOLD + OUT;
+        tl.to(fakes.slice(0, -1), {
+            opacity: 0, duration: 0.4,
+            stagger: { each: 0.04, from: 'start' },
+            ease: 'power2.in'
+        }, seqEnd + 0.3)
+            .to(fakes[N - 1], {
+                opacity: 0, duration: 0.5,
+                ease: 'power2.in'
+            });
+    } else {
+        // Immediately reveal without GSAP animation on re-visits
+        revealCarousel(true);
     }
-    animate();
+
+    window.addEventListener('wheel', e => { if (spinning) vel += e.deltaY * 0.05; });
+
+    const BUFFER = 600;
+
+    (function loop() {
+        requestAnimationFrame(loop);
+        if (!spinning) return;
+
+        vel *= 0.90;
+        offset -= vel;
+
+        cards.forEach((c, i) => {
+            let cx = cardX[i] + offset;
+            if (cx + w(i % N) < -BUFFER) {
+                cardX[i] += totalW + GAP;
+            }
+            if (cx > VW + BUFFER) {
+                cardX[i] -= totalW + GAP;
+            }
+        });
+
+        let closestCard = null;
+        let minDiff = Infinity;
+
+        cards.forEach((c, i) => {
+            const cx = cardX[i] + offset;
+            const mid = cx + w(i % N) / 2;
+            const diff = Math.abs(mid - VW / 2);
+            if (diff < minDiff) {
+                minDiff = diff;
+                closestCard = c;
+            }
+
+            c.style.left = cx + 'px';
+            const pan = c.querySelector('.pan');
+            if (pan) pan.style.transform = `translateX(${(cx + w(i % N) / 2 - VW / 2) * 0.08}px)`;
+        });
+
+        if (closestCard && isMobile) {
+            const workIdx = parseInt(closestCard.dataset.workIdx);
+            const work = worksData[workIdx];
+            if (titleEl.textContent !== work.title) {
+                titleEl.textContent = work.title;
+            }
+        }
+    }());
+
+    // Start clock
+    setInterval(() => {
+        const clk = document.getElementById('clock');
+        if (clk) clk.textContent = new Date().toLocaleTimeString('en-GB', { hour12: false });
+    }, 1000);
 }
 
 function initWorksList() {

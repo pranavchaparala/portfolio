@@ -50,17 +50,15 @@ function initCursor() {
             );
 
             if (isOverImgOrLink) {
-                // If it's the track img or works list item (with data-img), ensure open project label
+                // Strictly target ONLY the project-img (carousel covers) for the "Open Project" label
                 const isImg = elements.some(el => el.classList.contains('project-img'));
-                const isWorkItem = elements.some(el => el.closest && el.closest('li[data-img]'));
 
-                label.textContent = (isImg || isWorkItem) ? 'open project' : '';
-                label.style.display = (isImg || isWorkItem) ? 'block' : 'none';
+                label.textContent = isImg ? 'open project' : '';
 
                 cursorSq.classList.add('active-hover');
-                if (isImg || isWorkItem) document.body.classList.add('hovering-project');
+                if (isImg) document.body.classList.add('hovering-project');
+                else document.body.classList.remove('hovering-project');
             } else {
-                label.style.display = 'none';
                 cursorSq.classList.remove('active-hover');
                 document.body.classList.remove('hovering-project');
             }

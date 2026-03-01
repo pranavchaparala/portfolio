@@ -10,17 +10,21 @@
 body {
     background-color: #ffffff;
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+    font-size: 18px;
     height: 100vh;
     width: 100vw;
     overflow: hidden;
 }
 
-/* --- 2. THE NAVBAR (LOCKED LOWER AT 60% - ALWAYS VISIBLE) --- */
+/* --- 2. THE NAVBAR (LOCKED LOWER AT 80% - ALWAYS VISIBLE) --- */
+/* To adjust the position of the navbar, change the 'top' percentage value below.
+   A higher value moves it lower, a lower value moves it higher up the screen. */
 .main-nav {
     position: fixed;
-    top: 60%;
+    top: 65%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translateX(-50%);
+    /* Reapplied for centering */
     display: flex;
     align-items: center;
     gap: 32px;
@@ -66,44 +70,180 @@ body {
 }
 
 /* --- 4. GALLERY (INDEX ONLY) --- */
-#gallery-wrap {
+#bg {
     position: fixed;
-    bottom: calc(50% + 20px + 8px);
-    left: 0;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+}
+
+#bg-blur {
     width: 100%;
-    pointer-events: auto;
-    z-index: 10;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.8s;
 }
 
-.gallery-track {
-    display: flex;
-    width: max-content;
-    gap: 20px;
-    align-items: center;
-}
-
-.gallery-track img {
-    display: block;
+#bg-blur img {
+    width: 115%;
+    height: 115%;
+    position: absolute;
+    top: -7.5%;
+    left: -7.5%;
     object-fit: cover;
-    will-change: transform;
-    transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+    filter: blur(20px) brightness(1.05);
 }
 
-.gallery-track a:nth-child(odd) img {
-    height: 260px;
-    aspect-ratio: 4 / 5;
+/* Stage: cards are absolutely positioned here */
+#stage {
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+    overflow: hidden;
+    pointer-events: none;
 }
 
-.gallery-track a:nth-child(even) img {
-    height: 180px;
-    aspect-ratio: 5 / 4;
+.card {
+    position: absolute;
+    top: 40%;
+    background: #f0f0f0;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: auto;
+    transition: opacity 0.3s, background 0.3s, border 0.3s;
+    /* default invisible */
 }
+
+.card.p {
+    width: 255px;
+    height: 360px;
+    margin-top: -180px;
+}
+
+.card.l {
+    width: 390px;
+    height: 255px;
+    margin-top: -127px;
+}
+
+.pan {
+    position: absolute;
+    top: 0;
+    left: -25%;
+    width: 150%;
+    height: 100%;
+    pointer-events: none;
+    transition: opacity 0.3s;
+}
+
+.pan img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* The new 'dimmed' state for non-hovered cards */
+.card.dimmed {
+    opacity: 0.3 !important;
+    /* Forces lower opacity for dimmed state */
+}
+
+.card.dimmed .pan {
+    opacity: 0.3 !important;
+    /* Lowers image opacity while keeping the fill */
+}
+
+/* Fake overlay for loading sequence */
+#overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+}
+
+.fake {
+    position: absolute;
+    background: #f0f0f0;
+    overflow: hidden;
+    left: 50%;
+    top: 40%;
+    transform: scale(0);
+    transform-origin: center center;
+}
+
+.fake.p {
+    width: 255px;
+    height: 360px;
+    margin-left: -127px;
+    margin-top: -180px;
+}
+
+.fake.l {
+    width: 390px;
+    height: 255px;
+    margin-left: -195px;
+    margin-top: -127px;
+}
+
+.fake .pan {
+    position: absolute;
+    top: 0;
+    left: -25%;
+    width: 150%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.fake .pan img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+footer {
+    position: fixed;
+    width: 100%;
+    padding: 0 40px 40px 40px;
+    /* Adjusted padding for 40px margin */
+    display: flex;
+    justify-content: space-between;
+    z-index: 10000;
+    bottom: 0;
+    align-items: flex-end;
+    font-size: 18px;
+    font-weight: 500;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.footer-left {
+    max-width: 400px;
+    line-height: 1.4;
+    color: #000000;
+    /* Slightly muted color for secondary text */
+}
+
+.footer-right {
+    text-align: right;
+    line-height: 1.4;
+    color: #000000;
+}
+
+#clock {
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+}
+
 
 /* --- 5. WORK PAGE LIST --- */
 #work-list {
     position: fixed;
-    top: 45px;
-    left: 45px;
+    top: 40px;
+    /* Matching the 40px margin */
+    left: 40px;
+    /* Matching the 40px margin */
     z-index: 2000;
 }
 
@@ -168,21 +308,55 @@ body {
     height: 12px;
     border: 1.5px solid black;
     background: transparent;
-    transition: background-color 0.8s ease;
+    border-radius: 0px;
+    transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+        height 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+        border-radius 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+        background-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+        border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    position: absolute;
+    /* so it stays behind text */
 }
 
 body.loaded .loader-rect {
     background-color: black;
 }
 
+body.hovering-project .loader-rect {
+    width: 105px;
+    /* Shrunk from 130px */
+    height: 28px;
+    /* Shrunk from 36px */
+    border-radius: 0px;
+    background-color: #000;
+    border-color: #000;
+}
+
 #open-project-label {
     position: absolute;
-    top: -25px;
+    top: 50%;
     left: 50%;
-    transform: translateX(-50%);
-    font-size: 14px;
+    transform: translate(-50%, -50%);
+    font-size: 13px;
+    /* Smaller as requested */
+    font-weight: 500;
     white-space: nowrap;
-    display: none;
+    pointer-events: none;
+
+    /* text visibility states */
+    color: transparent;
+    transition: color 0.15s ease-in-out;
+    padding: 0;
+    background: none;
+    display: block;
+    letter-spacing: 0.5px;
+    text-transform: capitalize;
+}
+
+/* Fades the text in AFTER the box expands */
+body.hovering-project #open-project-label {
+    color: #fff;
+    transition: color 0.3s ease-in-out 0.15s;
 }
 
 /* --- 7. PAGE TRANSITIONS --- */
@@ -234,12 +408,16 @@ body.page-leaving #gallery-wrap {
 @media (max-width: 1024px) {
 
     /* Slightly smaller gallery items */
-    .gallery-track a:nth-child(odd) img {
-        height: 150px;
+    .card.p {
+        width: 170px;
+        height: 240px;
+        margin-top: -120px;
     }
 
-    .gallery-track a:nth-child(even) img {
-        height: 220px;
+    .card.l {
+        width: 260px;
+        height: 170px;
+        margin-top: -85px;
     }
 
     .main-nav {
@@ -254,30 +432,69 @@ body.page-leaving #gallery-wrap {
 
 /* Mobile (max-width: 768px) */
 @media (max-width: 768px) {
+    body {
+        overflow: hidden;
+        /* Prevent bounce if needed */
+    }
+
+    /* Carousel position */
+    .card,
+    .fake {
+        top: 30% !important;
+    }
+
+    .card.p,
+    .fake.p {
+        width: 153px;
+        height: 216px;
+        margin-top: -108px;
+    }
+
+    .card.l,
+    .fake.l {
+        width: 234px;
+        height: 153px;
+        margin-top: -76px;
+    }
+
+    /* Navbar positioning below carousel */
     .main-nav {
-        top: auto;
-        bottom: 30px;
-        left: 50%;
-        transform: translateX(-50%);
-        gap: 16px;
-        flex-wrap: wrap;
-        width: 90vw;
-        justify-content: center;
+        top: 55% !important;
+        bottom: auto !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        gap: 16px !important;
+        flex-wrap: wrap !important;
+        width: 90vw !important;
+        justify-content: center !important;
+        flex-direction: row !important;
     }
 
-    #gallery-wrap {
-        bottom: calc(30px + 60px + 8px);
+    /* Active Project Title */
+    #active-project-title {
+        position: fixed;
+        top: 65%;
+        left: 0;
+        width: 100%;
+        text-align: center;
+        font-size: 18px;
+        font-weight: 500;
+        color: #000;
+        z-index: 10000;
+        opacity: 0;
+        transition: opacity 0.5s ease;
+        pointer-events: none;
     }
 
-    .gallery-track a:nth-child(odd) img {
-        height: 120px;
+    body.page-loaded #active-project-title {
+        opacity: 1;
     }
 
-    .gallery-track a:nth-child(even) img {
-        height: 180px;
+    /* Keep footer hidden on very small screens if necessary or adjust */
+    footer {
+        padding: 20px 40px !important;
     }
 
-    /* Hide the work list on mobile project pages or index */
     #work-list {
         display: none !important;
     }
@@ -292,7 +509,6 @@ body.page-leaving #gallery-wrap {
         gap: 20px;
     }
 
-    /* Hide the scroll minimap/rail */
     .nav-rail {
         display: none !important;
     }

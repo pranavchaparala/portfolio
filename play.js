@@ -145,88 +145,88 @@ body.popup-open .main-nav {
 }
 .card:hover .card-label { opacity: 1; }
 
-/* ── POPUP BACKDROP ────────────────────────────── */
+/* ── POPUP ─────────────────────────────────────────────────── */
 #popup {
   position: fixed;
   inset: 0;
   z-index: 20000;
-  pointer-events: none;
-  background: rgba(255,255,255,0);
-  transition: background 0.55s ease;
-}
-#popup.active {
-  pointer-events: auto;
-  background: rgba(255,255,255,0.72);
-}
-
-/* ── ZOOMED CARD (animates from card rect to viewport center) ─ */
-#zoom-card {
-  position: fixed;
-  z-index: 20001;
-  overflow: hidden;
-  background: #111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   opacity: 0;
   pointer-events: none;
-  will-change: top, left, width, height, opacity;
+  transition: opacity 0.42s ease;
 }
-#zoom-card.animating {
-  transition:
-    top    0.65s cubic-bezier(0.76, 0, 0.24, 1),
-    left   0.65s cubic-bezier(0.76, 0, 0.24, 1),
-    width  0.65s cubic-bezier(0.76, 0, 0.24, 1),
-    height 0.65s cubic-bezier(0.76, 0, 0.24, 1),
-    opacity 0.3s ease;
+#popup.active {
+  opacity: 1;
+  pointer-events: auto;
 }
-#zoom-card.shrinking {
-  transition:
-    top    0.5s cubic-bezier(0.76, 0, 0.24, 1),
-    left   0.5s cubic-bezier(0.76, 0, 0.24, 1),
-    width  0.5s cubic-bezier(0.76, 0, 0.24, 1),
-    height 0.5s cubic-bezier(0.76, 0, 0.24, 1),
-    opacity 0.25s ease 0.25s;
+
+.popup-inner {
+  width: min(460px, 88vw);
+  background: #fff;
+  border-top: 1.5px solid #000;
+  transform: translateY(22px);
+  transition: transform 0.48s cubic-bezier(0.16,1,0.3,1);
 }
-#zoom-card video,
-#zoom-card img {
+#popup.active .popup-inner { transform: translateY(0); }
+
+.popup-img-wrap {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: #f0f0f0;
+}
+.popup-img-wrap img {
   width: 100%; height: 100%;
   object-fit: cover;
   display: block;
-  pointer-events: none;
 }
 
-/* ── INFO STRIP (fades in below zoomed card) ─────────────── */
-#zoom-info {
-  position: fixed;
-  z-index: 20002;
-  left: 50%;
-  transform: translateX(-50%);
-  text-align: center;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.35s ease;
-  white-space: nowrap;
+.popup-body {
+  padding: 26px 30px 30px;
 }
-#zoom-info.visible { opacity: 1; }
-.zoom-title {
-  font-size: 18px;
+.popup-meta {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #919191;
+  margin-bottom: 10px;
+}
+.popup-title {
+  font-size: 20px;
   font-weight: 500;
   color: #000;
+  line-height: 1.22;
+  margin-bottom: 14px;
   letter-spacing: -0.01em;
-  margin-bottom: 5px;
 }
-.zoom-desc {
-  font-size: 13px;
-  color: #666;
-  line-height: 1.5;
-  max-width: 420px;
-  margin: 0 auto 14px;
-  white-space: normal;
+.popup-desc {
+  font-size: 14px;
+  font-weight: 400;
+  color: #555;
+  line-height: 1.7;
 }
-.zoom-hint {
+.popup-hint {
+  margin-top: 26px;
+  padding-top: 18px;
+  border-top: 1px solid #ebebeb;
   font-size: 11px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: #aaa;
+  color: #b8b8b8;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
+.popup-hint::before {
+  content: '';
+  width: 14px; height: 1px;
+  background: #c8c8c8;
+  display: block;
+  flex-shrink: 0;
+}
+
 /* Mobile */
 @media (max-width: 768px) {
   .main-nav {
@@ -254,17 +254,16 @@ body.popup-open .main-nav {
 
 <div id="scene"></div>
 
-<!-- Backdrop (click anywhere to close) -->
-<div id="popup"></div>
-
-<!-- Zoomed card (position set by JS) -->
-<div id="zoom-card"></div>
-
-<!-- Info strip below the card -->
-<div id="zoom-info">
-  <h2 class="zoom-title" id="zoom-title"></h2>
-  <p  class="zoom-desc"  id="zoom-desc"></p>
-  <div class="zoom-hint">Click anywhere to return</div>
+<div id="popup">
+  <div class="popup-inner">
+    <div class="popup-img-wrap" id="popup-media"></div>
+    <div class="popup-body">
+      <div class="popup-meta">Playground</div>
+      <h2 class="popup-title" id="popup-title"></h2>
+      <p  class="popup-desc"  id="popup-desc"></p>
+      <div class="popup-hint">Click anywhere to return</div>
+    </div>
+  </div>
 </div>
 
 <script src="playgroundData.js"></script>
@@ -434,115 +433,75 @@ function tick() {
   rafId = requestAnimationFrame(tick);
 }
 
-// ── POPUP / ZOOM ─────────────────────────────────────────
-const popup     = document.getElementById('popup');
-const zoomCard  = document.getElementById('zoom-card');
-const zoomInfo  = document.getElementById('zoom-info');
-const zoomTitle = document.getElementById('zoom-title');
-const zoomDesc  = document.getElementById('zoom-desc');
-
-// Target card dimensions when zoomed in (px)
-const ZOOM_W = Math.min(360, window.innerWidth * 0.80);
-const ZOOM_H = ZOOM_W * (4 / 3);   // keep 3:4 ratio → show as 4:3 landscape
-const INFO_GAP = 24;                // gap between card bottom and info strip
+// ── POPUP ─────────────────────────────────────────────────────
+const popup      = document.getElementById('popup');
+const popupTitle = document.getElementById('popup-title');
+const popupDesc  = document.getElementById('popup-desc');
+const popupMedia = document.getElementById('popup-media');
 
 function openPopup(e) {
-  const card     = e.currentTarget;
-  const filename = card.dataset.filename;
-  const videoFile= card.dataset.video;
-  const assetPath= `playgroundassets/${filename}`;
-  const isVid    = filename && filename.toLowerCase().endsWith('.mp4');
+  const card      = e.currentTarget;
+  const filename  = card.dataset.filename;
+  const videoFile = card.dataset.video;
+  const assetPath = `playgroundassets/${filename}`;
+  const isVideo   = filename && filename.toLowerCase().endsWith('.mp4');
 
-  // Measure where the card lives right now
-  const r = card.getBoundingClientRect();
+  // Clear previous media
+  popupMedia.innerHTML = '';
 
-  // Teleport zoom-card to the exact card position first (no transition)
-  zoomCard.className = '';   // remove animating/shrinking
-  zoomCard.style.cssText = `
-    top:    ${r.top}px;
-    left:   ${r.left}px;
-    width:  ${r.width}px;
-    height: ${r.height}px;
-    opacity: 1;
-  `;
-
-  // Fill with media
-  zoomCard.innerHTML = '';
+  // If there's a dedicated popup videoFilename, show that (with audio)
+  // Otherwise show the thumbnail asset (image or muted video)
   if (videoFile) {
-    const vid = document.createElement('video');
-    vid.src = `playgroundassets/${videoFile}`;
-    vid.autoplay = true; vid.loop = true; vid.muted = false; vid.playsInline = true;
+    const vid       = document.createElement('video');
+    vid.src         = `playgroundassets/${videoFile}`;
+    vid.autoplay    = true;
+    vid.loop        = true;
+    vid.muted       = false;
+    vid.playsInline = true;
+    vid.controls    = false;
+    vid.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
+    popupMedia.appendChild(vid);
     vid.play().catch(() => { vid.muted = true; vid.play(); });
-    zoomCard.appendChild(vid);
-  } else if (isVid) {
-    const vid = document.createElement('video');
-    vid.src = assetPath; vid.autoplay = true; vid.loop = true;
-    vid.muted = true; vid.playsInline = true;
-    zoomCard.appendChild(vid);
+  } else if (isVideo) {
+    const vid       = document.createElement('video');
+    vid.src         = assetPath;
+    vid.autoplay    = true;
+    vid.loop        = true;
+    vid.muted       = true;
+    vid.playsInline = true;
+    vid.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
+    popupMedia.appendChild(vid);
   } else {
-    const img = document.createElement('img');
-    img.src = assetPath; img.alt = card.dataset.title;
-    img.onerror = () => { img.src = `https://picsum.photos/seed/${encodeURIComponent(filename)}/640/480`; };
-    zoomCard.appendChild(img);
+    const img   = document.createElement('img');
+    img.src     = assetPath;
+    img.alt     = card.dataset.title;
+    img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
+    img.onerror = function() {
+      this.onerror = null;
+      this.src = `https://picsum.photos/seed/${encodeURIComponent(filename)}/640/480`;
+    };
+    popupMedia.appendChild(img);
   }
 
-  // Force reflow so the starting position is painted before we add the transition
-  zoomCard.getBoundingClientRect();
-
-  // Target: centered in viewport
-  const destTop  = (window.innerHeight - ZOOM_H) / 2;
-  const destLeft = (window.innerWidth  - ZOOM_W) / 2;
-
-  // Info strip position: just below the zoomed card
-  zoomInfo.style.top = `${destTop + ZOOM_H + INFO_GAP}px`;
-  zoomTitle.textContent = card.dataset.title;
-  zoomDesc.textContent  = card.dataset.desc;
-
-  // Animate to center
-  zoomCard.classList.add('animating');
-  zoomCard.style.top    = `${destTop}px`;
-  zoomCard.style.left   = `${destLeft}px`;
-  zoomCard.style.width  = `${ZOOM_W}px`;
-  zoomCard.style.height = `${ZOOM_H}px`;
-
-  // Show backdrop + info after card starts moving
-  popup.classList.add('active');
+  popupTitle.textContent = card.dataset.title;
+  popupDesc.textContent  = card.dataset.desc;
   scene.classList.add('blurred');
+  popup.classList.add('active');
   document.body.classList.add('popup-open');
-  setTimeout(() => zoomInfo.classList.add('visible'), 420);
 }
 
 function closePopup() {
-  // Hide info immediately
-  zoomInfo.classList.remove('visible');
-
-  // Shrink card back (just shrink to center, no need to reverse to origin)
-  zoomCard.className = 'shrinking';
-  const midW = ZOOM_W * 0.35;
-  const midH = ZOOM_H * 0.35;
-  zoomCard.style.top    = `${(window.innerHeight - midH) / 2}px`;
-  zoomCard.style.left   = `${(window.innerWidth  - midW) / 2}px`;
-  zoomCard.style.width  = `${midW}px`;
-  zoomCard.style.height = `${midH}px`;
-  zoomCard.style.opacity = '0';
-
   popup.classList.remove('active');
   scene.classList.remove('blurred');
   document.body.classList.remove('popup-open');
-
-  // Clean up after transition
-  setTimeout(() => {
-    zoomCard.innerHTML = '';
-    zoomCard.className = '';
-    zoomCard.style.cssText = '';
-    zoomCard.querySelectorAll('video').forEach(v => { v.pause(); v.src = ''; });
-  }, 550);
+  // Stop any video playing in popup
+  popupMedia.querySelectorAll('video').forEach(v => { v.pause(); v.src = ''; });
 }
 
-// Click backdrop to close
-popup.addEventListener('click', closePopup);
-// Click the zoomed card itself does NOT close
-zoomCard.addEventListener('click', e => e.stopPropagation());
+// Click anywhere outside popup-inner closes it
+popup.addEventListener('click', e => {
+  if (!e.target.closest('.popup-inner')) closePopup();
+});
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closePopup(); });
 
 // ── CUSTOM CURSOR ─────────────────────────────────────────────

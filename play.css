@@ -8,7 +8,6 @@ body {
     overflow: hidden;
     user-select: none;
     cursor: none;
-    /* Persistent custom cursor */
 }
 
 .viewport {
@@ -43,25 +42,28 @@ body {
     align-items: center;
     justify-content: center;
 
-    /* Hardware Acceleration Hints for 120Hz Smoothness */
+    /* Hardware Acceleration */
     backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
     perspective: 1000px;
     transform-style: preserve-3d;
 
-    /* Fixed origin for linear translation-based path */
-    transform-origin: 0 0;
+    /* FIXED: center origin so zoom math works correctly */
+    transform-origin: center center;
 }
 
-/* Logic for focusing or resetting scale */
+/* Smooth transitions only during zoom-in / zoom-out */
 .is-focused,
 .is-resetting {
     transition: transform 1.8s cubic-bezier(0.65, 0, 0.35, 1);
 }
 
+/* Grid layout */
 .grid-container {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: var(--grid-gap);
+    /* Animate gap expansion on entry */
     transition: gap 2s cubic-bezier(0.4, 0, 0.2, 1);
     pointer-events: auto;
 }
@@ -78,12 +80,12 @@ body {
     }
 }
 
-/* Final Expanded State */
+/* Final expanded gap state (triggered by JS) */
 .grid-spaced {
     --grid-gap: 6rem;
 }
 
-/* 500:600 Ratio Cards - Reverted to fixed sizes */
+/* Cards at 500:600 ratio */
 .card {
     width: 100px;
     height: 120px;
@@ -93,6 +95,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    /* Opacity transition for focus-dimming effect */
     transition: opacity 0.8s cubic-bezier(0.7, 0, 0.2, 1);
     z-index: 1;
     overflow: hidden;
@@ -114,6 +117,7 @@ body {
     height: 100%;
     object-fit: cover;
     display: block;
+    /* Slightly dimmed by default, full on hover */
     opacity: 0.8;
     transition: opacity 0.3s ease;
     pointer-events: none;
@@ -123,7 +127,13 @@ body {
     opacity: 1;
 }
 
-/* Information Overlay - Lowered per request */
+/* Dim all non-active cards when focused */
+.is-focused .card:not(.active-card) {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Legacy class kept for compatibility */
 .info-overlay {
     position: fixed;
     bottom: 6%;
@@ -139,9 +149,4 @@ body {
 .info-visible {
     opacity: 1;
     transition: opacity 0.8s ease 0.8s;
-}
-
-.is-focused .card:not(.active-card) {
-    opacity: 0;
-    pointer-events: none;
 }

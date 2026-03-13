@@ -230,7 +230,6 @@ body.popup-open .main-nav {
 /* Mobile */
 @media (max-width: 768px) {
   .main-nav {
-    top: 55% !important;
     gap: 16px !important;
     flex-wrap: wrap !important;
     width: 90vw !important;
@@ -247,9 +246,11 @@ body.popup-open .main-nav {
 <div id="cursor-dot"></div>
 
 <nav class="main-nav">
-  <a href="index.html">Work</a>
+  <a href="index.html" class="brand">Pranav Chaparala</a>
+  <a href="play.html" class="active-link">Play</a>
+  <a href="research.html">Research</a>
   <a href="about.html">About</a>
-  <a href="play.html" class="active-link">Playground</a>
+  <a href="contact.html">Contact</a>
 </nav>
 
 <div id="scene"></div>
@@ -286,10 +287,10 @@ function getColCount() {
 }
 
 const GAP        = 12;
-const FRICTION   = 0.92;   // higher = slower coast after scroll
-const SCROLL_IN  = 0.28;   // overall input sensitivity (lower = slower movement)
-const SLOW_MULT  = 0.28;   // even columns — noticeably slower
-const FAST_MULT  = 1.0;    // odd  columns — full speed
+const FRICTION   = 0.70;   // higher = slower coast after scroll
+const SCROLL_IN  = 0.08;   // overall input sensitivity (lower = slower movement)
+const SLOW_MULT  = 1.0;    // odd columns  — base speed
+const FAST_MULT  = 1.25;   // even columns — slightly faster
 
 // ── BUILD COLUMNS ─────────────────────────────────────────────
 const scene   = document.getElementById('scene');
@@ -418,7 +419,8 @@ function tick() {
 
   colEls.forEach((col, ci) => {
     // All columns move in the SAME direction; alternates just move at different speeds
-    const mult = (ci % 2 === 0) ? SLOW_MULT : FAST_MULT;
+    // User requested 2nd and 4th rows (even index: 1, 3, etc.) to be slightly faster
+    const mult = (ci % 2 !== 0) ? FAST_MULT : SLOW_MULT;
     offsets[ci] += velocity * mult;
 
     // Seamless wrap within tripled content

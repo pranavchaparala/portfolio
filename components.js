@@ -20,19 +20,16 @@ const getBasePath = () => {
 const basePath = getBasePath();
 
 function injectNavigation() {
-    // Determine active links based on current path
     const pathname = window.location.pathname;
     const isIndex = (pathname.endsWith('index.html') || pathname.endsWith('/') || pathname === '') && !pathname.includes('/projects/');
-    const isWork = window.location.pathname.endsWith('work.html');
     const isPlay = window.location.pathname.endsWith('play.html');
     const isResearch = window.location.pathname.endsWith('research.html');
     const isAbout = window.location.pathname.endsWith('about.html');
     const isContact = window.location.pathname.endsWith('contact.html');
     const isProject = window.location.pathname.includes('/projects/');
 
-    if (isProject) return; // Hide/avoid injecting navbar in project pages
+    if (isProject) return; 
 
-    // Default brand to active link styling, otherwise regular style
     const brandClass = isIndex ? 'active-link' : 'brand';
     const inlineStyle = isIndex ? 'opacity: 0;' : '';
 
@@ -49,22 +46,18 @@ function injectNavigation() {
 }
 
 function setupTransitions() {
-    // Add page transition overlay to body
     const overlay = document.createElement('div');
     overlay.className = 'page-transition-overlay';
     document.body.appendChild(overlay);
 
-    // Initial load transition
     window.addEventListener('load', () => {
         document.body.classList.add('page-loaded');
     });
 
-    // In case load already fired
     if (document.readyState === 'complete') {
         document.body.classList.add('page-loaded');
     }
 
-    // Handle link clicks
     document.addEventListener('click', (e) => {
         const link = e.target.closest('a');
         const href = link ? link.getAttribute('href') : null;
@@ -72,13 +65,11 @@ function setupTransitions() {
         if (link && href && !href.startsWith('#') && link.target !== '_blank') {
             e.preventDefault();
             const targetUrl = link.href;
-
             document.body.classList.remove('page-loaded');
             document.body.classList.add('page-leaving');
-
             setTimeout(() => {
                 window.location.href = targetUrl;
-            }, 600); // Duration of out transition
+            }, 600);
         }
     });
 }
@@ -87,7 +78,10 @@ function initWorksTrack() {
     const stage = document.getElementById('stage');
     if (!stage) return;
 
-    // Ensure GSAP is loaded before attempting animation
+    // Initialize hover sound
+    const hoverSound = new Audio(basePath + 'hover.mp3');
+    hoverSound.preload = 'auto';
+
     if (typeof gsap === 'undefined') return;
 
     const bgBlur = document.getElementById('bg-blur');
@@ -100,12 +94,11 @@ function initWorksTrack() {
     const N = worksData.length;
     const GAP = 0;
 
-    // Responsive sizing helpers based on viewport
     const isMobile = VW <= 768;
     const isTablet = VW <= 1024;
 
     let pWidth = 255, lWidth = 390;
-    if (isMobile) { pWidth = 153; lWidth = 234; }
+    if (isMobile) { pWidth = 210; lWidth = 315; }
     else if (isTablet) { pWidth = 170; lWidth = 260; }
 
     const sh = i => i % 2 === 0 ? 'p' : 'l';
@@ -122,10 +115,14 @@ function initWorksTrack() {
             card.className = `card ${sh(gi)}`;
             card.innerHTML = `<div class="pan"><img src="${basePath + 'covers/' + work.img}" alt="${work.title}" class="project-img"></div>`;
             card.dataset.workIdx = i;
-            // Add a global lock flag at the top of your function ideally, but we can stick it onto the parent scope for the carousel. Actually let's use document.body class for global lock.
 
             card.addEventListener('mouseenter', () => {
                 if (!blurEnabled || document.body.classList.contains('project-opening')) return;
+
+                // Play hover sound
+                hoverSound.currentTime = 0;
+                hoverSound.play().catch(() => { /* Blocked until first interaction */ });
+
                 bgImg.src = `${basePath + 'covers/' + work.img}`;
                 bgBlur.style.opacity = '0.4';
                 cards.forEach(c => {
@@ -140,7 +137,7 @@ function initWorksTrack() {
             card.addEventListener('click', (e) => {
                 if (document.body.classList.contains('project-opening')) return;
                 const ci = cards.indexOf(card);
-                vel = 0; // stop scroll momentum
+                vel = 0;
                 const targetOffset = VW / 2 - (cardX[ci] + w(ci % N) / 2);
                 let proxy = { o: offset };
 
@@ -150,7 +147,6 @@ function initWorksTrack() {
                     ease: 'power3.out',
                     onUpdate: () => { offset = proxy.o; },
                     onComplete: () => {
-                        // Lock the hover state securely
                         document.body.classList.add('project-opening');
                         cards.forEach(c => {
                             if (c !== card) {
@@ -158,21 +154,18 @@ function initWorksTrack() {
                             } else {
                                 c.classList.remove('dimmed');
                                 c.classList.add('clicked-active');
-                                // Force 100% opacity natively on the container and the pan internal
                                 c.style.setProperty('opacity', '1', 'important');
                                 const pan = c.querySelector('.pan');
                                 if (pan) pan.style.setProperty('opacity', '1', 'important');
                             }
                         });
-
-                        // After centered, short delay before triggering route
                         setTimeout(() => {
                             document.body.classList.remove('page-loaded');
                             document.body.classList.add('page-leaving');
                             setTimeout(() => {
                                 window.location.href = basePath + work.link;
-                            }, 600); // UI transition duration
-                        }, 200); // Short delay
+                            }, 600);
+                        }, 200);
                     }
                 });
             });
@@ -192,7 +185,6 @@ function initWorksTrack() {
     const midRep = Math.floor(numReps / 2);
     const heroIdx = midRep * N + (N - 1);
     const heroCard = cards[heroIdx];
-
     const heroMid = cardX[heroIdx] + w(heroIdx % N) / 2;
     let offset = VW / 2 - heroMid;
 
@@ -216,19 +208,23 @@ function initWorksTrack() {
     titleEl.id = 'active-project-title';
     document.body.appendChild(titleEl);
 
+    if (isMobile) {
+        const heroWork = worksData[heroIdx % N];
+        titleEl.dataset.currentTitle = heroWork.title;
+        titleEl.innerHTML = `<div class="project-subheading">Selected Work</div>${heroWork.title}`;
+        bgImg.src = `${basePath + 'covers/' + heroWork.img}`;
+    }
+
     let vel = 0;
     let spinning = false;
 
     function revealCarousel(instant = false) {
         if (overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay);
-
-        const sorted = cards
-            .filter(c => c !== heroCard)
-            .sort((a, b) => {
-                const ai = cards.indexOf(a);
-                const bi = cards.indexOf(b);
-                return Math.abs(ai - heroIdx) - Math.abs(bi - heroIdx);
-            });
+        const sorted = cards.filter(c => c !== heroCard).sort((a, b) => {
+            const ai = cards.indexOf(a);
+            const bi = cards.indexOf(b);
+            return Math.abs(ai - heroIdx) - Math.abs(bi - heroIdx);
+        });
 
         if (instant) {
             gsap.set(cards, { opacity: 1 });
@@ -237,10 +233,7 @@ function initWorksTrack() {
         } else {
             gsap.to(sorted, {
                 opacity: 1, duration: 0.6, stagger: 0.03, ease: 'power2.out',
-                onComplete() {
-                    spinning = true;
-                    blurEnabled = true;
-                }
+                onComplete() { spinning = true; blurEnabled = true; }
             });
         }
 
@@ -248,33 +241,27 @@ function initWorksTrack() {
         if (mainNav) gsap.to(mainNav, { opacity: 1, duration: instant ? 0 : 0.8 });
         const footer = document.querySelector('footer');
         if (footer) gsap.to(footer, { opacity: 1, duration: instant ? 0 : 0.8 });
-
-        // Hide the page content dissolve animation so it doesn't conflict
-        const content = document.querySelector('.page-content');
-        if (content) content.style.opacity = '1';
     }
 
     const hasVisited = sessionStorage.getItem('portfolio_visited');
 
     if (!hasVisited) {
         sessionStorage.setItem('portfolio_visited', 'true');
-
         const fakes = worksData.map((work, i) => {
             const f = document.createElement('div');
             f.className = `fake ${sh(i)}`;
             f.style.zIndex = 100 + i;
             if (isMobile) {
-                f.style.width = sh(i) === 'p' ? '153px' : '234px';
-                f.style.height = sh(i) === 'p' ? '216px' : '153px';
-                f.style.marginLeft = sh(i) === 'p' ? '-76px' : '-117px';
-                f.style.marginTop = sh(i) === 'p' ? '-108px' : '-76px';
+                f.style.width = sh(i) === 'p' ? '210px' : '315px';
+                f.style.height = sh(i) === 'p' ? '296px' : '210px';
+                f.style.marginLeft = sh(i) === 'p' ? '-105px' : '-157px';
+                f.style.marginTop = sh(i) === 'p' ? '-148px' : '-105px';
             } else if (isTablet) {
                 f.style.width = sh(i) === 'p' ? '170px' : '260px';
                 f.style.height = sh(i) === 'p' ? '240px' : '170px';
                 f.style.marginLeft = sh(i) === 'p' ? '-85px' : '-130px';
                 f.style.marginTop = sh(i) === 'p' ? '-120px' : '-85px';
             }
-
             f.innerHTML = `<div class="pan"><img src="${basePath + 'covers/' + work.img}" alt="${work.title}"></div>`;
             overlay.appendChild(f);
             return f;
@@ -286,72 +273,77 @@ function initWorksTrack() {
         fakes.forEach((f, i) => {
             const t = i * STEP;
             tl.to(f, { scale: 1.02, duration: IN, ease: 'power3.out' }, t)
-                .to(f, { scale: 1.0, duration: OUT, ease: 'power2.inOut' }, t + IN + HOLD);
+              .to(f, { scale: 1.0, duration: OUT, ease: 'power2.inOut' }, t + IN + HOLD);
         });
 
         const seqEnd = (N - 1) * STEP + IN + HOLD + OUT;
         tl.to(fakes.slice(0, -1), {
-            opacity: 0, duration: 0.4,
-            stagger: { each: 0.04, from: 'start' },
-            ease: 'power2.in'
+            opacity: 0, duration: 0.4, stagger: { each: 0.04, from: 'start' }, ease: 'power2.in'
         }, seqEnd + 0.3)
-            .to(fakes[N - 1], {
-                opacity: 0, duration: 0.5,
-                ease: 'power2.in'
-            });
+        .to(fakes[N - 1], { opacity: 0, duration: 0.5, ease: 'power2.in' });
     } else {
-        // Immediately reveal without GSAP animation on re-visits
         revealCarousel(true);
     }
 
     window.addEventListener('wheel', e => { if (spinning) vel += e.deltaY * 0.05; });
 
-    const BUFFER = 600;
+    let touchStartX = 0;
+    let touchStartY = 0;
+    window.addEventListener('touchstart', e => {
+        if (!spinning) return;
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+    }, {passive: true});
 
+    window.addEventListener('touchmove', e => {
+        if (!spinning) return;
+        const currentX = e.touches[0].clientX;
+        const currentY = e.touches[0].clientY;
+        const dx = touchStartX - currentX;
+        const dy = touchStartY - currentY;
+        
+        vel += (dx + dy) * 0.15;
+        
+        touchStartX = currentX;
+        touchStartY = currentY;
+    }, {passive: true});
+
+    const BUFFER = 600;
     (function loop() {
         requestAnimationFrame(loop);
         if (!spinning) return;
-
         vel *= 0.90;
         offset -= vel;
-
         cards.forEach((c, i) => {
             let cx = cardX[i] + offset;
-            if (cx + w(i % N) < -BUFFER) {
-                cardX[i] += totalW + GAP;
-            }
-            if (cx > VW + BUFFER) {
-                cardX[i] -= totalW + GAP;
-            }
+            if (cx + w(i % N) < -BUFFER) cardX[i] += totalW + GAP;
+            if (cx > VW + BUFFER) cardX[i] -= totalW + GAP;
         });
-
         let closestCard = null;
         let minDiff = Infinity;
-
         cards.forEach((c, i) => {
             const cx = cardX[i] + offset;
             const mid = cx + w(i % N) / 2;
             const diff = Math.abs(mid - VW / 2);
-            if (diff < minDiff) {
-                minDiff = diff;
-                closestCard = c;
-            }
-
+            if (diff < minDiff) { minDiff = diff; closestCard = c; }
             c.style.left = cx + 'px';
             const pan = c.querySelector('.pan');
             if (pan) pan.style.transform = `translateX(${(cx + w(i % N) / 2 - VW / 2) * 0.08}px)`;
         });
-
         if (closestCard && isMobile) {
             const workIdx = parseInt(closestCard.dataset.workIdx);
             const work = worksData[workIdx];
-            if (titleEl.textContent !== work.title) {
-                titleEl.textContent = work.title;
+            if (titleEl.dataset.currentTitle !== work.title) {
+                titleEl.dataset.currentTitle = work.title;
+                titleEl.innerHTML = `<div class="project-subheading">Selected Work</div>${work.title}`;
+                
+                // Update background for mobile since hover is disabled
+                bgImg.src = `${basePath + 'covers/' + work.img}`;
+                bgBlur.style.opacity = '0.4';
             }
         }
     }());
 
-    // Start clock
     setInterval(() => {
         const clk = document.getElementById('clock');
         if (clk) clk.textContent = new Date().toLocaleTimeString('en-GB', { hour12: false });
@@ -361,9 +353,7 @@ function initWorksTrack() {
 function initWorksList() {
     const listContainer = document.querySelector('#work-list ul');
     if (!listContainer) return;
-
     listContainer.innerHTML = '';
-
     const hoverContainer = document.getElementById('hover-image-container');
     const hoverImg = document.getElementById('hover-preview');
     const hoverBg = document.getElementById('hover-bg-blur');
@@ -371,11 +361,9 @@ function initWorksList() {
     worksData.forEach(work => {
         const li = document.createElement('li');
         li.setAttribute('data-img', work.img);
-
         const a = document.createElement('a');
         a.href = basePath + work.link;
         a.textContent = work.title;
-
         li.appendChild(a);
         listContainer.appendChild(li);
 
@@ -388,11 +376,8 @@ function initWorksList() {
                 hoverContainer.classList.add('active');
             }
         });
-
         a.addEventListener('mouseleave', () => {
-            if (hoverContainer) {
-                hoverContainer.classList.remove('active');
-            }
+            if (hoverContainer) hoverContainer.classList.remove('active');
         });
     });
 }
@@ -402,4 +387,18 @@ document.addEventListener('DOMContentLoaded', () => {
     setupTransitions();
     initWorksTrack();
     initWorksList();
+
+    // AUDIO UNLOCKER: Captures the very first interaction to enable hover sounds
+    const unlockAudio = () => {
+        const silentAudio = new Audio();
+        silentAudio.play().then(() => {
+            window.removeEventListener('click', unlockAudio);
+            window.removeEventListener('touchstart', unlockAudio);
+            window.removeEventListener('wheel', unlockAudio);
+        }).catch(() => {});
+    };
+
+    window.addEventListener('click', unlockAudio);
+    window.addEventListener('touchstart', unlockAudio);
+    window.addEventListener('wheel', unlockAudio);
 });

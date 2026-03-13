@@ -445,24 +445,20 @@ body.page-leaving #gallery-wrap {
 
     .card.p,
     .fake.p {
-        width: 153px;
-        height: 216px;
-        margin-top: -108px;
+        width: 210px;
+        height: 296px;
+        margin-top: -148px;
     }
 
     .card.l,
     .fake.l {
-        width: 234px;
-        height: 153px;
-        margin-top: -76px;
+        width: 315px;
+        height: 210px;
+        margin-top: -105px;
     }
 
     /* Navbar positioning below carousel */
     .main-nav {
-        top: 55% !important;
-        bottom: auto !important;
-        left: 50% !important;
-        transform: translateX(-50%) !important;
         gap: 16px !important;
         flex-wrap: wrap !important;
         width: 90vw !important;
@@ -473,17 +469,31 @@ body.page-leaving #gallery-wrap {
     /* Active Project Title */
     #active-project-title {
         position: fixed;
-        top: 65%;
+        /* The navbar is at top: 55% or ~15-20% from the bottom of the visual center padding.
+           To mirror it at the top, we'll position it down from the top edge. */
+        top: 15%; 
         left: 0;
         width: 100%;
         text-align: center;
-        font-size: 18px;
+        font-size: 20px;
         font-weight: 500;
         color: #000;
         z-index: 10000;
         opacity: 0;
         transition: opacity 0.5s ease;
         pointer-events: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .project-subheading {
+        font-size: 11px;
+        opacity: 0.4;
+        margin-bottom: 8px;
+        font-weight: 400;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
     }
 
     body.page-loaded #active-project-title {

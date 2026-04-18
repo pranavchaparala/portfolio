@@ -61,12 +61,5 @@ const playgroundData = [
         videoFilename: "playground9.mp4",
         title: "ECHO",
         description: "Recursive Pattern Echo"
-    },
-    {
-        id: 10,
-        filename: "playground10.png",
-        videoFilename: "playground10.mp4",
-        title: "Coin Animation",
-        description: "Animation on Blender for a crypto app onboarding."
     }
 ];

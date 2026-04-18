@@ -1,13 +1,99 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-    <meta http-equiv="refresh" content="0; url=../../project.html?id=clanx">
-    <script>
-        window.location.replace("../../project.html?id=clanx");
-    </script>
-    <title>Redirecting...</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClanX | Pranav Chaparala</title>
+    <link rel="stylesheet" href="../../style.css">
+    <link rel="stylesheet" href="../../project.css">
+    <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
+    <meta name="project-img" content="clanx.png">
 </head>
+
 <body>
-    If you are not redirected automatically, follow this <a href="../../project.html?id=clanx">link</a>.
+
+    <a href="../../index.html" class="back-btn-center"><span>←</span> Go Back</a>
+
+    <nav id="work-list">
+        <span class="section-label">Work</span>
+        <ul></ul>
+    </nav>
+    <div class="page-content">
+        <main id="main-content">
+            <div class="case-study-container" id="project-container">
+                <h1>ClanX: Deep Profile</h1>
+                <p class="body-text">
+                    This case study explores the key features, design philosophy, and potential impact of Deep Profiles
+                    on ClanX, an AI-powered recruitment platform.
+                </p>
+                <p class="body-text">
+                    It highlights the importance of understanding recruiter needs, analyzing essential candidate data
+                    points, and designing efficient, user-centered workflows.
+                </p>
+
+                <div class="meta-grid">
+                    <span class="meta-label">Year</span>
+                    <span class="meta-value">2024</span>
+                    <span class="meta-label">Client</span>
+                    <span class="meta-value">ClanX</span>
+                    <span class="meta-label">Team</span>
+                    <span class="meta-value">Pranav Chaparala, Ruchit Mehta</span>
+                </div>
+
+                <img src="assets/1.png" alt="01">
+                <img src="assets/2.png" alt="02">
+                <img src="assets/3.png" alt="03">
+                <img src="assets/4.png" alt="04">
+                <img src="assets/5.png" alt="05">
+                <img src="assets/6.png" alt="06">
+            </div>
+        </main>
+    </div>
+
+    <div class="nav-rail" id="rail">
+        <div id="scroll-indicator"></div>
+        <div id="mini-map-content"></div>
+    </div>
+
+    <script src="../../projects.js"></script>
+    <script src="../../cursor.js"></script>
+    <script src="../../components.js"></script>
+
+    <script>
+        const lenis = new Lenis({ duration: 1.2, lerp: 0.1 });
+        function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+        requestAnimationFrame(raf);
+
+        const mainContent = document.getElementById('main-content');
+        const miniMap = document.getElementById('mini-map-content');
+        const indicator = document.getElementById('scroll-indicator');
+        const rail = document.getElementById('rail');
+        miniMap.appendChild(mainContent.cloneNode(true));
+
+        function syncLayout() {
+            const pageHeight = mainContent.scrollHeight;
+            const scaleFactor = rail.clientWidth / window.innerWidth;
+            miniMap.style.transform = `scale(${scaleFactor})`;
+            rail.style.height = `${Math.min(pageHeight * scaleFactor, window.innerHeight * 0.5)}px`;
+            indicator.style.height = `${rail.clientHeight * (window.innerHeight / pageHeight)}px`;
+        }
+        const resizeObserver = new ResizeObserver(() => syncLayout());
+        resizeObserver.observe(mainContent);
+        window.addEventListener('load', () => { syncLayout(); setTimeout(syncLayout, 500); });
+        window.addEventListener('resize', syncLayout);
+        syncLayout();
+
+        lenis.on('scroll', (e) => {
+            const scrollPercent = e.progress;
+            indicator.style.transform = `translateY(${scrollPercent * (rail.clientHeight - indicator.clientHeight)}px)`;
+            const scaleFactor = rail.clientWidth / window.innerWidth;
+            const scaledHeight = mainContent.scrollHeight * scaleFactor;
+            if (scaledHeight > rail.clientHeight) {
+                miniMap.style.top = `-${(scaledHeight - rail.clientHeight) * scrollPercent}px`;
+            }
+        });
+    </script>
 </body>
+
 </html>

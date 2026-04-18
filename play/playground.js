@@ -229,8 +229,7 @@ function executeZoom({ clickedCard, title, description, videoFilename }) {
     document.getElementById('focus-title').innerText = title;
     document.getElementById('focus-subtitle').innerText = description;
 
-    if (mainHeader) mainHeader.style.opacity = '0';
-    if (mainHeader) mainHeader.style.pointerEvents = 'none';
+    if (mainHeader) mainHeader.style.opacity = '0.05'; // Faint but accessible
 
     if (videoFilename) {
         const vid = document.createElement('video');
@@ -257,10 +256,7 @@ function resetView() {
     gridWrapper.classList.add('is-resetting');
 
     infoOverlay.classList.remove('info-visible');
-    if (mainHeader) {
-        mainHeader.style.opacity = '1';
-        mainHeader.style.pointerEvents = 'auto';
-    }
+    if (mainHeader) mainHeader.style.opacity = '1';
 
     targetX = 0; targetY = 0;
     currentX = 0; currentY = 0;

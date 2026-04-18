@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Playground | Pranav Chaparala</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="playground.css">
+</head>
+
+<body class="bg-white">
+    <!-- Navigation is injected by components.js -->
+    
+    <main class="viewport" id="viewport">
+        <div id="grid-wrapper" class="grid-wrapper">
+            <div id="grid" class="grid-container">
+                <!-- Cards Injected via JS by playground.js -->
+            </div>
+        </div>
+    </main>
+
+    <div id="info-overlay" class="info-overlay">
+        <h2 id="focus-title" class="!text-[0.65rem] !tracking-[0.5em] mb-2 font-bold uppercase"></h2>
+        <p id="focus-subtitle" class="!text-[0.55rem] !text-gray-600 !tracking-widest"></p>
+        <button onclick="resetView()"
+            class="mt-12 !text-[0.5rem] !text-gray-700 hover:!text-black transition-colors pointer-events-auto">
+            [ CLICK ANYWHERE TO RETURN ]
+        </button>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../projects.js"></script>
+    <script src="../cursor.js"></script>
+    <script src="../components.js"></script>
+    <script src="playgroundData.js"></script>
+    <script src="playground.js"></script>
+</body>
+
+</html>

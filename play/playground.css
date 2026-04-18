@@ -20,6 +20,7 @@ body {
     overflow: hidden;
     position: relative;
     cursor: grab;
+    background: #fff; /* Reverted to white */
 }
 
 .viewport:active {
@@ -93,8 +94,9 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    opacity: 1 !important; /* Overriding global style.css opacity: 0 */
     transition: opacity 0.8s cubic-bezier(0.7, 0, 0.2, 1);
-    z-index: 1;
+    z-index: 10;
     overflow: hidden;
 }
 
@@ -144,4 +146,26 @@ body {
 .is-focused .card:not(.active-card) {
     opacity: 0;
     pointer-events: none;
+}
+/* Navbar Hover Accessibility in Focus Mode */
+.main-nav {
+    transition: opacity 0.5s ease;
+}
+
+.main-nav:hover {
+    opacity: 1 !important;
+}
+
+/* Navbar White Box Enhancement */
+.main-nav {
+    background: rgba(255, 255, 255, 1);
+    /*backdrop-filter: blur(100px);
+    -webkit-backdrop-filter: blur(15px);*/
+    padding: 2px 8px; 
+    /*border-radius: 4px; /* Slightly rounded corners */
+    /*box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    
+    /* Ensure vertical alignment matches other pages despite transition and padding */
+    transform: translate(-50%, -50%); 
 }

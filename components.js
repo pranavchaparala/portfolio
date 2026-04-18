@@ -29,13 +29,40 @@ function injectNavigation() {
     const inlineStyle = isIndex ? 'opacity: 0;' : '';
 
     const navHTML = `
-        <nav class="main-nav" style="${inlineStyle}">
+        <div id="hamburger-btn">
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </div>
+        <div id="mobile-nav-overlay">
+            <nav class="mobile-nav-links">
+                <a href="${basePath}index.html" class="${isIndex ? 'active-link' : ''}">Pranav Chaparala</a>
+                <a href="${basePath}work/index.html" class="${isWork ? 'active-link' : ''}">Work</a>
+                <a href="${basePath}play/index.html" class="${isPlay ? 'active-link' : ''}">Play</a>
+                <a href="${basePath}about/index.html" class="${isAbout ? 'active-link' : ''}">About</a>
+            </nav>
+        </div>
+        <nav class="main-nav desktop-only" style="${inlineStyle}">
             <a href="${basePath}index.html" class="${brandClass}">Pranav Chaparala</a>
             <a href="${basePath}work/index.html" class="${isWork ? 'active-link' : ''}">Work</a>
             <a href="${basePath}play/index.html" class="${isPlay ? 'active-link' : ''}">Play</a>
-            <a href="${basePath}about/index.html" class="${isAbout ? 'active-link' : ''}">About</a>        </nav>
+            <a href="${basePath}about/index.html" class="${isAbout ? 'active-link' : ''}">About</a>        
+        </nav>
     `;
     document.body.insertAdjacentHTML('beforeend', navHTML);
+
+    const hamburgerBtn = document.getElementById('hamburger-btn');
+    const overlay = document.getElementById('mobile-nav-overlay');
+    if (hamburgerBtn && overlay) {
+        hamburgerBtn.addEventListener('click', () => {
+            hamburgerBtn.classList.toggle('open');
+            overlay.classList.toggle('open');
+            if (overlay.classList.contains('open')) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = '';
+            }
+        });
+    }
 }
 
 function setupTransitions() {
@@ -260,7 +287,10 @@ function initWorksTrack() {
         }
 
         const mainNav = document.querySelector('.main-nav');
+        const hamburgerBtn = document.getElementById('hamburger-btn');
         if (mainNav) gsap.to(mainNav, { opacity: 1, duration: instant ? 0 : 0.8 });
+        if (hamburgerBtn) gsap.to(hamburgerBtn, { opacity: 1, duration: instant ? 0 : 0.8 });
+        
         const footer = document.querySelector('footer');
         if (footer) gsap.to(footer, { opacity: 1, duration: instant ? 0 : 0.8 });
     }
@@ -386,7 +416,18 @@ function initWorksList() {
         li.setAttribute('data-img', work.img);
         const a = document.createElement('a');
         a.href = basePath + work.link;
-        a.textContent = work.title;
+        
+        // Add image for mobile (hidden on desktop via css)
+        const coverImg = document.createElement('img');
+        coverImg.src = basePath + 'covers/' + work.img;
+        coverImg.className = 'mobile-work-cover';
+        a.appendChild(coverImg);
+        
+        const textSpan = document.createElement('span');
+        textSpan.className = 'work-title';
+        textSpan.textContent = work.title;
+        a.appendChild(textSpan);
+
         li.appendChild(a);
         listContainer.appendChild(li);
 

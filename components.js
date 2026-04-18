@@ -1,17 +1,7 @@
 // components.js
 
-const worksData = [
-    { title: "Echoes of Presence", img: "echoesofpresence.png", link: "projects/echoes-of-presence/index.html" },
-    { title: "ClanX", img: "clanx.png", link: "projects/clanx/index.html" },
-    { title: "Lectrix EV", img: "lectrix.png", link: "projects/lectrix/index.html" },
-    { title: "Nosie: Luna Ring", img: "lunaring.png", link: "projects/lunaring/index.html" },
-    { title: "Noise: View Buds", img: "echoesofpresence.png", link: "projects/viewbuds/index.html" },
-    { title: "OxygenOS 12", img: "lectrix.png", link: "projects/oxygen/index.html" },
-    { title: "Gudz Logistics", img: "echoesofpresence.png", link: "projects/gudz/index.html" },
-    { title: "Bezapp", img: "clanx.png", link: "projects/bezapp/index.html" },
-    { title: "Inka", img: "lectrix.png", link: "projects/inka/index.html" },
-    { title: "SĀR Rise Collection", img: "lunaring.png", link: "projects/sar/index.html" }
-];
+// Ensure projects.js is included before components.js so projectsData is available.
+const worksData = typeof projectsData !== 'undefined' ? projectsData : [];
 
 const getBasePath = () => {
     return window.location.pathname.includes('/projects/') ? '../../' : './';
@@ -22,6 +12,7 @@ const basePath = getBasePath();
 function injectNavigation() {
     const pathname = window.location.pathname;
     const isIndex = (pathname.endsWith('index.html') || pathname.endsWith('/') || pathname === '') && !pathname.includes('/projects/');
+    const isWork = window.location.pathname.endsWith('work.html');
     const isPlay = window.location.pathname.endsWith('play.html');
     const isResearch = window.location.pathname.endsWith('research.html');
     const isAbout = window.location.pathname.endsWith('about.html');
@@ -36,11 +27,9 @@ function injectNavigation() {
     const navHTML = `
         <nav class="main-nav" style="${inlineStyle}">
             <a href="${basePath}index.html" class="${brandClass}">Pranav Chaparala</a>
+            <a href="${basePath}work.html" class="${isWork ? 'active-link' : ''}">Work</a>
             <a href="${basePath}play.html" class="${isPlay ? 'active-link' : ''}">Play</a>
-            <a href="${basePath}research.html" class="${isResearch ? 'active-link' : ''}">Research</a>
-            <a href="${basePath}about.html" class="${isAbout ? 'active-link' : ''}">About</a>
-            <a href="${basePath}contact.html" class="${isContact ? 'active-link' : ''}">Contact</a>
-        </nav>
+            <a href="${basePath}about.html" class="${isAbout ? 'active-link' : ''}">About</a>        </nav>
     `;
     document.body.insertAdjacentHTML('beforeend', navHTML);
 }

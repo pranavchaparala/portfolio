@@ -48,16 +48,13 @@
 
         #work-list {
             position: fixed;
-            top: 40px;
-            left: 45px;
+            top: 60px; /* Aligned to Work page sidebar */
+            left: 40px;
             z-index: 2000;
         }
 
         .section-label {
-            font-size: 18px;
-            color: #919191;
-            margin-bottom: 8px;
-            display: block;
+            display: none;
         }
 
         #work-list ul {
@@ -88,14 +85,15 @@
         /* --- 3. LAYOUT & CONTENT --- */
         #main-content {
             display: flex;
-            justify-content: center;
+            justify-content: flex-start; /* Removed center-alignment */
             width: 100%;
         }
 
         .case-study-container {
             width: 55vw;
-            max-width: 1000px; /* from clanx max-width */
-            padding-top: 120px;
+            max-width: 1000px;
+            margin-left: 350px; /* Matched to Work page grid */
+            padding-top: 60px; /* Align top with list items */
             padding-bottom: 20vh;
             display: flex;
             flex-direction: column;

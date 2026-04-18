@@ -9,6 +9,7 @@ function initCursor() {
             <div id="cursor-square-loader">
                 <div class="loader-rect"></div>
                 <span id="open-project-label">open project</span>
+                <span id="drag-explore-hint">drag to explore</span>
             </div>
         `);
     }
@@ -16,6 +17,26 @@ function initCursor() {
     const cursorSq = document.getElementById('cursor-square-loader');
     const pathEl = document.getElementById('thread-path');
     const label = document.getElementById('open-project-label');
+    const hint = document.getElementById('drag-explore-hint');
+
+    // Show hint only on play page
+    if (document.body.classList.contains('play-page')) {
+        setTimeout(() => {
+            if (hint) hint.classList.add('visible');
+        }, 1000);
+    }
+
+    const hideHint = () => {
+        if (hint) {
+            hint.classList.remove('visible');
+            hint.style.opacity = '0';
+        }
+        window.removeEventListener('mousedown', hideHint);
+        window.removeEventListener('touchstart', hideHint);
+    };
+
+    window.addEventListener('mousedown', hideHint);
+    window.addEventListener('touchstart', hideHint);
 
     let mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
     let points = Array.from({ length: 12 }, () => ({ x: mouse.x, y: mouse.y }));

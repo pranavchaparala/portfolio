@@ -13,6 +13,35 @@ const getBasePath = () => {
 
 const basePath = getBasePath();
 
+function injectAboutModal() {
+    if (document.querySelector('.about-modal')) return;
+    const modalHTML = `
+        <div class="about-modal" onclick="closeAboutModal()">
+            <div class="about-content">
+                <h1>Pranav Chaparala</h1>
+                <p>I am a Product Designer with experience in crafting impactful products. Currently Pursuing an MFA in Design & Technology at Parsons School of Design.</p>
+                <p>My work focuses on the intersection of human-centered design and emerging technologies, striving to create seamless digital experiences that solve real-world problems.</p>
+                <p style="font-size: 10px; opacity: 0.4; margin-top: 40px;">Click anywhere to close</p>
+            </div>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+}
+
+window.openAboutModal = function() {
+    injectAboutModal();
+    setTimeout(() => {
+        document.querySelector('.about-modal').classList.add('active');
+    }, 10);
+};
+
+window.closeAboutModal = function() {
+    const modal = document.querySelector('.about-modal');
+    if (modal) {
+        modal.classList.remove('active');
+    }
+};
+
 function injectNavigation() {
     const pathname = window.location.pathname;
     const isIndex = (pathname.endsWith('index.html') || pathname.endsWith('/') || pathname === '' || pathname.endsWith('portfolioagain')) && !pathname.includes('/projects/') && !pathname.includes('/work/') && !pathname.includes('/play/') && !pathname.includes('/about/');
@@ -27,20 +56,22 @@ function injectNavigation() {
     const inlineStyle = isIndex ? 'opacity: 0;' : '';
     
     // Immediately display spatial navigation on non-index pages
-    const spatialOpacityStyle = !isIndex ? 'opacity: 1 !important;' : '';
+    const spatialOpacityStyle = !isIndex ? 'opacity: 1 !important;' : 'opacity: 0;';
 
     const navHTML = `
         <nav class="mobile-spatial-nav mobile-only" style="${spatialOpacityStyle}">
             <a href="${basePath}index.html" class="nav-top-left ${isIndex ? 'active-link' : ''}">Pranav Chaparala</a>
-            <a href="${basePath}play/index.html" class="nav-top-right ${isPlay ? 'active-link' : ''}">Play</a>
             <a href="${basePath}work/index.html" class="nav-top-center ${isWork ? 'active-link' : ''}">Work</a>
-            <a href="${basePath}about/index.html" class="nav-bottom-left ${isAbout ? 'active-link' : ''}">About</a>
+            <a href="${basePath}play/index.html" class="nav-top-right ${isPlay ? 'active-link' : ''}">Play</a>
+            <a href="javascript:void(0)" onclick="openAboutModal()" class="nav-bottom-left">About</a>
         </nav>
         <nav class="main-nav desktop-only" style="${inlineStyle}">
             <a href="${basePath}index.html" class="${brandClass}">Pranav Chaparala</a>
-            <a href="${basePath}work/index.html" class="${isWork ? 'active-link' : ''}">Work</a>
-            <a href="${basePath}play/index.html" class="${isPlay ? 'active-link' : ''}">Play</a>
-            <a href="${basePath}about/index.html" class="${isAbout ? 'active-link' : ''}">About</a>        
+            <div class="nav-right-links">
+                <a href="${basePath}work/index.html" class="${isWork ? 'active-link' : ''}">Work</a>
+                <a href="${basePath}play/index.html" class="${isPlay ? 'active-link' : ''}">Play</a>
+                <a href="javascript:void(0)" onclick="openAboutModal()">About</a>        
+            </div>
         </nav>
     `;
     document.body.insertAdjacentHTML('beforeend', navHTML);
@@ -62,6 +93,9 @@ function setupTransitions() {
     document.addEventListener('click', (e) => {
         const link = e.target.closest('a');
         const href = link ? link.getAttribute('href') : null;
+
+        // Skip modal triggers
+        if (href && href.startsWith('javascript:')) return;
 
         if (link && href && !href.startsWith('#') && link.target !== '_blank') {
             e.preventDefault();
@@ -100,23 +134,24 @@ function initWorksTrack() {
 
     const isMobile = VW <= 768;
     const isTablet = VW <= 1024 && VW > 768;
-    const isVertical = isMobile;
+    const isVertical = false; // Reverted to horizontal globally
 
     let pWidth = 280, lWidth = 390;
-    if (isMobile) { pWidth = 300; lWidth = 340; }
-    else if (isTablet) { pWidth = 200; lWidth = 260; }
+    if (isMobile) { pWidth = 220; lWidth = 280; } // Shrunk slightly for horizontal fit
+    else if (isTablet) { pWidth = 240; lWidth = 320; }
+
 
     const sh = i => (i % N) % 2 === 0 ? 'p' : 'l';
     const w = i => sh(i) === 'p' ? pWidth : lWidth;
 
     const h = i => {
         if (sh(i) === 'p') {
-            if (isMobile) return 420;
-            if (isTablet) return 282;
+            if (isMobile) return 308;
+            if (isTablet) return 336;
             return 395;
         } else {
-            if (isMobile) return 240;
-            if (isTablet) return 170;
+            if (isMobile) return 210;
+            if (isTablet) return 240;
             return 255;
         }
     };
@@ -167,7 +202,8 @@ function initWorksTrack() {
                 }
 
                 bgImg.src = `${basePath + 'covers/' + work.img}`;
-                bgBlur.style.opacity = '0.4';
+                // [ADJUST OPACITY HERE] - Background blur opacity when hovering carousel cards (Desktop)
+                bgBlur.style.opacity = '0.25';
                 cards.forEach(c => {
                     if (c !== card) c.classList.add('dimmed');
                 });
@@ -271,14 +307,14 @@ function initWorksTrack() {
     titleEl.id = 'active-project-title';
     document.body.appendChild(titleEl);
 
+    // Initial state for all devices: hide until reveal
+    gsap.set(titleEl, { opacity: 0 });
+
     if (isMobile) {
         const heroWork = carouselWorks[heroIdx % N];
         titleEl.dataset.currentTitle = heroWork.title;
         titleEl.innerHTML = `<div class="project-subheading">Selected Work</div>${heroWork.title}`;
         bgImg.src = `${basePath + 'covers/' + heroWork.img}`;
-    } else {
-        // Desktop initial state
-        gsap.set(titleEl, { opacity: 0 });
     }
 
     let vel = 0;
@@ -305,26 +341,35 @@ function initWorksTrack() {
 
         const mainNav = document.querySelector('.main-nav');
         const mobileNav = document.querySelector('.mobile-spatial-nav');
-        if (mainNav) gsap.to(mainNav, { opacity: 1, duration: instant ? 0 : 0.8 });
-        if (mobileNav) gsap.to(mobileNav, { opacity: 1, duration: instant ? 0 : 0.8 });
+        if (mainNav) {
+            gsap.to(mainNav, { opacity: 1, duration: instant ? 0 : 0.8 });
+            mainNav.style.pointerEvents = 'auto';
+        }
+        if (mobileNav) {
+            gsap.to(mobileNav, { opacity: 1, duration: instant ? 0 : 0.8 });
+            mobileNav.style.pointerEvents = 'auto';
+        }
+        if (titleEl) gsap.to(titleEl, { opacity: 1, duration: instant ? 0 : 0.8 });
         
         const footer = document.querySelector('footer');
-        if (footer) gsap.to(footer, { opacity: 1, duration: instant ? 0 : 0.8 });
+        if (footer) gsap.to(footer, { opacity: 1, duration: instant ? 0 : 0.8, onComplete: () => footer.style.pointerEvents = 'auto' });
+
+        document.body.classList.remove('loading-page');
+        sessionStorage.setItem('portfolio_visited', 'true');
     }
 
     const hasVisited = sessionStorage.getItem('portfolio_visited');
 
     if (!hasVisited) {
-        sessionStorage.setItem('portfolio_visited', 'true');
         const fakes = carouselWorks.map((work, i) => {
             const f = document.createElement('div');
             f.className = `fake ${sh(i)}`;
             f.style.zIndex = 100 + i;
             if (isMobile) {
-                f.style.width = sh(i) === 'p' ? '300px' : '340px';
-                f.style.height = sh(i) === 'p' ? '420px' : '240px';
-                f.style.marginLeft = sh(i) === 'p' ? '-150px' : '-170px';
-                f.style.marginTop = sh(i) === 'p' ? '-210px' : '-120px';
+                f.style.width = sh(i) === 'p' ? '220px' : '280px';
+                f.style.height = sh(i) === 'p' ? '308px' : '210px';
+                f.style.marginLeft = sh(i) === 'p' ? '-110px' : '-140px';
+                f.style.marginTop = sh(i) === 'p' ? '-154px' : '-105px';
             } else if (isTablet) {
                 f.style.width = sh(i) === 'p' ? '170px' : '260px';
                 f.style.height = sh(i) === 'p' ? '240px' : '170px';
@@ -428,6 +473,9 @@ function initWorksTrack() {
             const viewSize = VW;
             const mid = cp + size / 2;
             c.style.left = cp + 'px';
+            // Vertical parallax: subtle Y shift based on distance from center
+            const distFromCenter = (mid - viewSize / 2) / viewSize;
+            c.style.transform = `translateY(${distFromCenter * 30}px)`;
             const pan = c.querySelector('.pan');
             if (pan) pan.style.transform = `translateX(${(mid - viewSize / 2) * 0.01}px)`;
         });
@@ -491,6 +539,32 @@ document.addEventListener('DOMContentLoaded', () => {
     setupTransitions();
     initWorksTrack();
     initWorksList();
+    injectAboutModal();
+
+    const isIndex = (window.location.pathname.endsWith('index.html') || window.location.pathname.endsWith('/') || window.location.pathname === '' || window.location.pathname.endsWith('portfolioagain')) && !window.location.pathname.includes('/projects/') && !window.location.pathname.includes('/work/') && !window.location.pathname.includes('/play/') && !window.location.pathname.includes('/about/');
+    if (isIndex && !sessionStorage.getItem('portfolio_visited')) {
+        document.body.classList.add('loading-page');
+    }
+
+    if (window.location.pathname.includes('/work/')) {
+        document.body.classList.add('scrollable');
+    }
+
+    const isPlay = window.location.pathname.includes('/play/');
+    if (isPlay) {
+        document.body.classList.add('play-page');
+    }
+
+    // Critical Navigation Fix: Reveal nav on subpages or return visits
+    // revealCarousel is scoped inside initWorksTrack, so we reveal nav directly here
+    if (!isIndex || sessionStorage.getItem('portfolio_visited')) {
+        const mainNav = document.querySelector('.main-nav');
+        const mobileNav = document.querySelector('.mobile-spatial-nav');
+        const footer = document.querySelector('footer');
+        if (mainNav) { mainNav.style.opacity = '1'; mainNav.style.pointerEvents = 'auto'; }
+        if (mobileNav) { mobileNav.style.opacity = '1'; mobileNav.style.pointerEvents = 'auto'; }
+        if (footer) { footer.style.opacity = '1'; footer.style.pointerEvents = 'auto'; }
+    }
 
     // AUDIO UNLOCKER: Captures the very first interaction to enable hover sounds
     const unlockAudio = () => {

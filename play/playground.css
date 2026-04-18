@@ -156,16 +156,3 @@ body {
     opacity: 1 !important;
 }
 
-/* Navbar White Box Enhancement */
-.main-nav {
-    background: rgba(255, 255, 255, 1);
-    /*backdrop-filter: blur(100px);
-    -webkit-backdrop-filter: blur(15px);*/
-    padding: 2px 8px; 
-    /*border-radius: 4px; /* Slightly rounded corners */
-    /*box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    
-    /* Ensure vertical alignment matches other pages despite transition and padding */
-    transform: translate(-50%, -50%); 
-}

@@ -5,6 +5,7 @@ const projectsData = [
         "title": "ClanX",
         "img": "clanx.png",
         "link": "projects/clanx/index.html",
+        "tags": ["Product Design", "UX"],
         "content": "<h1>ClanX</h1><p>Content loaded from project folder.</p>"
     },
     {
@@ -12,6 +13,7 @@ const projectsData = [
         "title": "Unreasonable Cube",
         "img": "unreasonablecube.png",
         "link": "projects/unreasonablecube/index.html",
+        "tags": ["Installation", "Creative Tech"],
         "content": "<h1>Unreasonable Cube</h1><p>Content loaded from project folder.</p>"
     },
     {
@@ -19,6 +21,7 @@ const projectsData = [
         "title": "Echoes of Presence",
         "img": "echoesofpresence.png",
         "link": "projects/echoes-of-presence/index.html",
+        "tags": ["Installation", "Creative Tech"],
         "content": "<h1>Echoes of Presence</h1><p>Content loaded from project folder.</p>"
     },
     {
@@ -26,6 +29,7 @@ const projectsData = [
         "title": "DoodleForest",
         "img": "doodleforest.png",
         "link": "projects/doodleforest/index.html",
+        "tags": ["Creative Tech", "UX"],
         "content": "<h1>DoodleForest</h1><p>Content loaded from project folder.</p>"
     },
     {
@@ -33,6 +37,7 @@ const projectsData = [
         "title": "OnePlus: OxygenOS12",
         "img": "oneplus.png",
         "link": "projects/oneplus/index.html",
+        "tags": ["Product Design", "UX"],
         "content": "<h1>OnePlus: OxygenOS12</h1><p>Content loaded from project folder.</p>"
     },
     {
@@ -40,6 +45,7 @@ const projectsData = [
         "title": "Lectrix",
         "img": "lectrix.png",
         "link": "projects/lectrix/index.html",
+        "tags": ["Product Design", "Branding"],
         "content": "<h1>Lectrix</h1><p>Content loaded from project folder.</p>"
     },
     {
@@ -47,6 +53,7 @@ const projectsData = [
         "title": "Lectrix EV",
         "img": "lectrix.png",
         "link": "projects/lectrixEV/index.html",
+        "tags": ["Product Design", "Branding"],
         "content": "<h1>Lectrix EV</h1><p>Content loaded from project folder.</p>"
     },
     {
@@ -54,6 +61,7 @@ const projectsData = [
         "title": "Lunaring",
         "img": "lunaring.png",
         "link": "projects/lunaring/index.html",
+        "tags": ["Product Design", "UX"],
         "content": "<h1>Lunaring</h1><p>Content loaded from project folder.</p>"
     },
     {
@@ -61,6 +69,7 @@ const projectsData = [
         "title": "Oxygen",
         "img": "lectrix.png",
         "link": "projects/oxygen/index.html",
+        "tags": ["UX", "Branding"],
         "content": "<h1>Oxygen</h1><p>Content loaded from project folder.</p>"
     },
     {
@@ -68,6 +77,7 @@ const projectsData = [
         "title": "Sar",
         "img": "lunaring.png",
         "link": "projects/sar/index.html",
+        "tags": ["Creative Tech", "Installation"],
         "content": "<h1>Sar</h1><p>Content loaded from project folder.</p>"
     },
     {
@@ -75,6 +85,7 @@ const projectsData = [
         "title": "Viewbuds",
         "img": "echoesofpresence.png",
         "link": "projects/viewbuds/index.html",
+        "tags": ["Product Design", "UX"],
         "content": "<h1>Viewbuds</h1><p>Content loaded from project folder.</p>"
     }
 ];

@@ -297,154 +297,88 @@
 
         /* --- 8. MOBILE & TABLET PORTFOLIO REFACTOR (≤ 1024px) --- */
         @media (max-width: 1024px) {
-            /* Structural Logic: Horizontal Track */
-            body, html {
-                overflow: hidden !important; 
-                overscroll-behavior-x: none;
-                height: 100dvh !important;
-                width: 100vw !important;
-            }
-
-            #main-content {
-                display: block !important;
-                width: 100vw !important;
-                height: 100dvh !important;
-                margin: 0;
-                padding: 0;
+            #work-list {
+                display: none !important;
             }
 
             .case-study-container {
-                display: flex !important;
-                flex-direction: row !important;
                 width: 100vw !important;
-                height: 100dvh !important;
-                max-width: none !important;
-                padding: 0 !important;
+                max-width: 100vw !important;
+                padding: 100px 20px 60px 20px !important;
+                display: flex;
+                flex-direction: column;
                 margin: 0;
-                overflow-x: auto !important;
-                overflow-y: hidden !important;
-                scroll-snap-type: x mandatory !important;
-                -webkit-overflow-scrolling: touch;
-                gap: 0;
-                align-items: center;
-                background: #ffffff !important; /* Flat, high-contrast, non-glass */
             }
 
-            /* Target direct children (h1, p, meta-grid) as text/data sections */
-            .case-study-container > * {
-                flex: 0 0 100vw !important;
-                height: 100dvh !important;
-                scroll-snap-align: start !important;
-                margin: 0 !important;
-                padding: 40px 24px !important;
-                display: flex !important;
-                flex-direction: column !important;
-                justify-content: center !important;
-                background: #ffffff !important;
-                color: #000000 !important;
-                box-sizing: border-box !important;
-            }
-
-            /* Asset Framing for images & containers */
-            .case-study-container img,
-            .case-study-container .full-img,
-            .case-study-container .img-grid,
-            .case-study-container .gallery-grid {
-                flex: 0 0 100vw !important;
-                width: 100vw !important;
-                height: 100dvh !important;
-                object-fit: cover !important;
-                padding: 0 !important;
-                border-radius: 0 !important;
-            }
-
-            /* Fix grids inside so they don't break flex layout */
-            .case-study-container .img-grid,
-            .case-study-container .gallery-grid {
-                display: flex !important;
-                flex-direction: row !important;
-                gap: 0 !important;
-            }
-            .case-study-container .img-grid > *,
-            .case-study-container .gallery-grid > * {
-                flex: 0 0 100vw !important;
-                width: 100vw !important;
-                height: 100dvh !important;
-                object-fit: cover !important;
-                scroll-snap-align: start !important;
-                padding: 0 !important;
-            }
-
-            /* Responsive Typography (Fluid Scale) */
             h1 {
-                font-size: clamp(3rem, 10vw, 4.5rem) !important;
-                font-weight: 700 !important;
-                line-height: 1.1;
-                letter-spacing: -0.02em;
-                text-transform: uppercase;
-                max-width: 90vw;
-            }
-            
-            h2 {
-                font-size: clamp(2rem, 8vw, 3rem) !important;
-                font-weight: 700 !important;
-                line-height: 1.1;
+                font-size: 14px !important;
+                margin-bottom: 24px !important;
+                font-weight: 600 !important;
                 letter-spacing: -0.01em;
+                text-transform: uppercase;
             }
 
             .body-text, 
-            .list-section li, 
-            .meta-value, 
-            .meta-label {
-                font-size: clamp(1.25rem, 5vw, 1.8rem) !important;
-                line-height: 1.4 !important;
-                max-width: 90vw;
-            }
-            
-            .meta-value {
-                font-weight: 600 !important;
+            .list-section li {
+                font-size: 14px !important;
+                line-height: 1.5 !important;
+                color: #707070 !important;
+                margin-bottom: 16px !important;
             }
 
             .meta-grid {
+                display: grid !important;
+                grid-template-columns: 80px 1fr !important;
+                gap: 10px 20px !important;
+                margin: 40px 0 60px 0 !important;
+                align-items: baseline !important;
+            }
+
+            .meta-label {
+                font-size: 13px !important;
+                color: #000 !important;
+                font-weight: 600 !important;
+                text-transform: uppercase;
+                letter-spacing: -0.01em;
+            }
+
+            .meta-value {
+                font-size: 13px !important;
+                color: #707070 !important;
+                font-weight: 400 !important;
+            }
+
+            .case-study-container img,
+            .case-study-container .full-img {
+                width: 100% !important;
+                height: auto !important;
+                margin-bottom: 8px !important;
+                border-radius: 0 !important;
+            }
+
+            .img-grid, .gallery-grid {
                 display: flex !important;
                 flex-direction: column !important;
-                justify-content: center !important;
-                align-items: flex-start !important;
-                gap: 16px !important;
-                max-width: 90vw;
+                gap: 8px !important;
+                margin: 0 0 8px 0 !important;
             }
             
-            /* Remove visual clutter / glassmorphism / hover effects */
-            .nav-rail, .top-nav-fade, #cursor-svg, #cursor-square-loader {
+            .img-grid > *, .gallery-grid > * {
+                margin-bottom: 0 !important;
+            }
+
+            /* Ensure all navigational overlays and custom cursors explicitly un-render */
+            .nav-rail, .top-nav-fade, #cursor-svg, #cursor-square-loader, .back-btn-center {
                 display: none !important;
             }
-            
+
             * { cursor: auto !important; }
 
-            /* Interaction & Touch */
             a, button {
                 min-height: 48px;
                 min-width: 48px;
                 display: inline-flex;
                 align-items: center;
-                justify-content: center;
                 transition: none !important;
-            }
-
-            .back-btn-center {
-                position: fixed;
-                top: 20px !important;
-                left: 20px !important;
-                transform: none !important;
-                background: transparent !important;
-                z-index: 9999;
-                mix-blend-mode: difference;
-                color: #ffffff !important;
-                font-weight: 600;
-                justify-content: flex-start;
-            }
-            
-            .back-btn-center:hover {
-                opacity: 1 !important;
             }
         }

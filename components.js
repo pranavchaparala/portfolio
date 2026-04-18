@@ -23,24 +23,19 @@ function injectNavigation() {
     const isContact = pathname.includes('/contact/');
     const isProject = window.location.pathname.includes('/projects/');
 
-    if (isProject) return; 
-
     const brandClass = isIndex ? 'active-link' : 'brand';
     const inlineStyle = isIndex ? 'opacity: 0;' : '';
+    
+    // Immediately display spatial navigation on non-index pages
+    const spatialOpacityStyle = !isIndex ? 'opacity: 1 !important;' : '';
 
     const navHTML = `
-        <div id="hamburger-btn">
-            <div class="bar"></div>
-            <div class="bar"></div>
-        </div>
-        <div id="mobile-nav-overlay">
-            <nav class="mobile-nav-links">
-                <a href="${basePath}index.html" class="${isIndex ? 'active-link' : ''}">Pranav Chaparala</a>
-                <a href="${basePath}work/index.html" class="${isWork ? 'active-link' : ''}">Work</a>
-                <a href="${basePath}play/index.html" class="${isPlay ? 'active-link' : ''}">Play</a>
-                <a href="${basePath}about/index.html" class="${isAbout ? 'active-link' : ''}">About</a>
-            </nav>
-        </div>
+        <nav class="mobile-spatial-nav mobile-only" style="${spatialOpacityStyle}">
+            <a href="${basePath}index.html" class="nav-top-left ${isIndex ? 'active-link' : ''}">Pranav Chaparala</a>
+            <a href="${basePath}play/index.html" class="nav-top-right ${isPlay ? 'active-link' : ''}">Play</a>
+            <a href="${basePath}work/index.html" class="nav-top-center ${isWork ? 'active-link' : ''}">Work</a>
+            <a href="${basePath}about/index.html" class="nav-bottom-left ${isAbout ? 'active-link' : ''}">About</a>
+        </nav>
         <nav class="main-nav desktop-only" style="${inlineStyle}">
             <a href="${basePath}index.html" class="${brandClass}">Pranav Chaparala</a>
             <a href="${basePath}work/index.html" class="${isWork ? 'active-link' : ''}">Work</a>
@@ -49,20 +44,6 @@ function injectNavigation() {
         </nav>
     `;
     document.body.insertAdjacentHTML('beforeend', navHTML);
-
-    const hamburgerBtn = document.getElementById('hamburger-btn');
-    const overlay = document.getElementById('mobile-nav-overlay');
-    if (hamburgerBtn && overlay) {
-        hamburgerBtn.addEventListener('click', () => {
-            hamburgerBtn.classList.toggle('open');
-            overlay.classList.toggle('open');
-            if (overlay.classList.contains('open')) {
-                document.body.style.overflow = 'hidden';
-            } else {
-                document.body.style.overflow = '';
-            }
-        });
-    }
 }
 
 function setupTransitions() {
@@ -97,6 +78,8 @@ function setupTransitions() {
 function initWorksTrack() {
     const stage = document.getElementById('stage');
     if (!stage) return;
+    
+    // Physics bouncing executes natively now on iOS.
 
     // Initialize hover sound
     const hoverSound = new Audio(basePath + 'hover.mp3');
@@ -116,10 +99,11 @@ function initWorksTrack() {
     const GAP = 0;
 
     const isMobile = VW <= 768;
-    const isTablet = VW <= 1024;
+    const isTablet = VW <= 1024 && VW > 768;
+    const isVertical = isMobile;
 
     let pWidth = 280, lWidth = 390;
-    if (isMobile) { pWidth = 230; lWidth = 315; }
+    if (isMobile) { pWidth = 300; lWidth = 340; }
     else if (isTablet) { pWidth = 200; lWidth = 260; }
 
     const sh = i => (i % N) % 2 === 0 ? 'p' : 'l';
@@ -127,18 +111,27 @@ function initWorksTrack() {
 
     const h = i => {
         if (sh(i) === 'p') {
-            if (isMobile) return 325;
+            if (isMobile) return 420;
             if (isTablet) return 282;
             return 395;
         } else {
-            if (isMobile) return 206;
+            if (isMobile) return 240;
             if (isTablet) return 170;
             return 255;
         }
     };
 
-    const cycleW = carouselWorks.reduce((sum, _, i) => sum + w(i) + GAP, 0);
-    const numReps = Math.ceil((VW * 3) / cycleW) + 2;
+    const cycleSize = carouselWorks.reduce((sum, _, i) => sum + (isVertical ? h(i) : w(i)) + GAP, 0);
+    const numReps = isVertical ? 1 : Math.ceil(((isVertical ? VH : VW) * 3) / cycleSize) + 2;
+
+    if (isVertical) {
+        stage.style.position = 'relative';
+        stage.style.display = 'flex';
+        stage.style.flexDirection = 'column';
+        stage.style.alignItems = 'center';
+        stage.style.paddingTop = '80px';
+        stage.style.paddingBottom = '80px';
+    }
 
     const cards = [];
     for (let r = 0; r < numReps; r++) {
@@ -148,10 +141,19 @@ function initWorksTrack() {
             card.className = `card ${sh(i)}`;
             card.style.width = w(i) + 'px';
             card.style.height = h(i) + 'px';
+            
+            if (isVertical) {
+                card.style.position = 'relative';
+                card.style.left = 'auto';
+                card.style.top = 'auto';
+                card.style.margin = '0 0 -1px 0'; // Prevent iOS render pixel gapping entirely
+            }
+
             card.innerHTML = `<div class="pan"><img src="${basePath + 'covers/' + work.img}" alt="${work.title}" class="project-img"></div>`;
             card.dataset.workIdx = i;
 
             card.addEventListener('mouseenter', () => {
+                if (isMobile) return; // Prevent Safari ghost tap
                 if (!blurEnabled || document.body.classList.contains('project-opening')) return;
 
                 // Play hover sound
@@ -171,6 +173,7 @@ function initWorksTrack() {
                 });
             });
             card.addEventListener('mouseleave', () => {
+                if (isMobile) return; // Prevent Safari ghost tap
                 if (!blurEnabled || document.body.classList.contains('project-opening')) return;
                 
                 if (!isMobile) {
@@ -182,9 +185,21 @@ function initWorksTrack() {
             });
             card.addEventListener('click', (e) => {
                 if (document.body.classList.contains('project-opening')) return;
+                
+                if (isVertical) {
+                    document.body.classList.add('project-opening');
+                    document.body.classList.remove('page-loaded');
+                    document.body.classList.add('page-leaving');
+                    setTimeout(() => {
+                        window.location.href = basePath + work.link;
+                    }, 400);
+                    return;
+                }
+
                 const ci = cards.indexOf(card);
                 vel = 0;
-                const targetOffset = VW / 2 - (cardX[ci] + w(ci % N) / 2);
+                const size = w(ci % N);
+                const targetOffset = VW / 2 - (cardPos[ci] + size / 2);
                 let proxy = { o: offset };
 
                 gsap.to(proxy, {
@@ -220,26 +235,28 @@ function initWorksTrack() {
         });
     }
 
-    let x = 0;
-    const cardX = cards.map((c, i) => {
-        const cx = x;
-        x += w(i) + GAP;
-        return cx;
+    let pos = 0;
+    const cardPos = cards.map((c, i) => {
+        const cp = pos;
+        pos += (isVertical ? h(i) : w(i)) + GAP;
+        return cp;
     });
-    const totalW = x - GAP;
+    const totalPos = pos - GAP;
 
     const midRep = Math.floor(numReps / 2);
     const heroIdx = midRep * N + (N - 1);
     const heroCard = cards[heroIdx];
-    const heroMid = cardX[heroIdx] + w(heroIdx % N) / 2;
-    let offset = VW / 2 - heroMid;
+    const heroSize = isVertical ? h(heroIdx % N) : w(heroIdx % N);
+    const heroMid = cardPos[heroIdx] + heroSize / 2;
+    let offset = (isVertical ? VH : VW) / 2 - heroMid;
 
     function applyPositions() {
+        if (isVertical) return; // Native CSS handles location!
         cards.forEach((c, i) => {
-            const cx = cardX[i] + offset;
-            c.style.left = cx + 'px';
+            const cp = cardPos[i] + offset;
+            c.style.left = cp + 'px';
             const pan = c.querySelector('.pan');
-            if (pan) pan.style.transform = `translateX(${(cx + w(i % N) / 2 - VW / 2) * 0.01}px)`;
+            if (pan) pan.style.transform = `translateX(${(cp + w(i % N) / 2 - VW / 2) * 0.01}px)`;
         });
     }
     applyPositions();
@@ -287,9 +304,9 @@ function initWorksTrack() {
         }
 
         const mainNav = document.querySelector('.main-nav');
-        const hamburgerBtn = document.getElementById('hamburger-btn');
+        const mobileNav = document.querySelector('.mobile-spatial-nav');
         if (mainNav) gsap.to(mainNav, { opacity: 1, duration: instant ? 0 : 0.8 });
-        if (hamburgerBtn) gsap.to(hamburgerBtn, { opacity: 1, duration: instant ? 0 : 0.8 });
+        if (mobileNav) gsap.to(mobileNav, { opacity: 1, duration: instant ? 0 : 0.8 });
         
         const footer = document.querySelector('footer');
         if (footer) gsap.to(footer, { opacity: 1, duration: instant ? 0 : 0.8 });
@@ -304,10 +321,10 @@ function initWorksTrack() {
             f.className = `fake ${sh(i)}`;
             f.style.zIndex = 100 + i;
             if (isMobile) {
-                f.style.width = sh(i) === 'p' ? '210px' : '315px';
-                f.style.height = sh(i) === 'p' ? '296px' : '210px';
-                f.style.marginLeft = sh(i) === 'p' ? '-105px' : '-157px';
-                f.style.marginTop = sh(i) === 'p' ? '-148px' : '-105px';
+                f.style.width = sh(i) === 'p' ? '300px' : '340px';
+                f.style.height = sh(i) === 'p' ? '420px' : '240px';
+                f.style.marginLeft = sh(i) === 'p' ? '-150px' : '-170px';
+                f.style.marginTop = sh(i) === 'p' ? '-210px' : '-120px';
             } else if (isTablet) {
                 f.style.width = sh(i) === 'p' ? '170px' : '260px';
                 f.style.height = sh(i) === 'p' ? '240px' : '170px';
@@ -337,18 +354,18 @@ function initWorksTrack() {
         revealCarousel(true);
     }
 
-    window.addEventListener('wheel', e => { if (spinning) vel += e.deltaY * 0.05; });
+    window.addEventListener('wheel', e => { if (spinning && !isVertical) vel += e.deltaY * 0.05; });
 
     let touchStartX = 0;
     let touchStartY = 0;
     window.addEventListener('touchstart', e => {
-        if (!spinning) return;
+        if (!spinning || isVertical) return;
         touchStartX = e.touches[0].clientX;
         touchStartY = e.touches[0].clientY;
     }, {passive: true});
 
     window.addEventListener('touchmove', e => {
-        if (!spinning) return;
+        if (!spinning || isVertical) return;
         const currentX = e.touches[0].clientX;
         const currentY = e.touches[0].clientY;
         const dx = touchStartX - currentX;
@@ -364,37 +381,56 @@ function initWorksTrack() {
     (function loop() {
         requestAnimationFrame(loop);
         if (!spinning) return;
+        
+        if (isVertical) {
+            // NATIVE MOBILE Parallax & Hover calculations ONLY
+            let closestCard = null;
+            let minDiff = Infinity;
+            cards.forEach((c, i) => {
+                const rect = c.getBoundingClientRect();
+                const mid = rect.top + rect.height / 2;
+                const viewSize = VH;
+                const diff = Math.abs(mid - viewSize / 2);
+                if (diff < minDiff) { 
+                    minDiff = diff; 
+                    closestCard = c; 
+                }
+                const pan = c.querySelector('.pan');
+                if (pan) pan.style.transform = `translateY(${(mid - viewSize / 2) * 0.01}px)`;
+            });
+
+            if (closestCard && isMobile) {
+                const workIdx = parseInt(closestCard.dataset.workIdx);
+                const work = carouselWorks[workIdx];
+                if (titleEl.dataset.currentTitle !== work.title) {
+                    titleEl.dataset.currentTitle = work.title;
+                    titleEl.innerHTML = `<div class="project-subheading">Selected Work</div>${work.title}`;
+                    bgImg.src = `${basePath + 'covers/' + work.img}`;
+                    bgBlur.style.opacity = '0.2';
+                }
+            }
+            return; // completely halt GSAP math processing for vertical
+        }
+
+        // DESKTOP INFINITE GSAP LOOP MATH
         vel *= 0.90;
         offset -= vel;
         cards.forEach((c, i) => {
-            let cx = cardX[i] + offset;
-            if (cx + w(i) < -BUFFER) cardX[i] += totalW + GAP;
-            if (cx > VW + BUFFER) cardX[i] -= totalW + GAP;
+            let cp = cardPos[i] + offset;
+            const size = w(i % N);
+            if (cp + size < -BUFFER) cardPos[i] += totalPos + GAP;
+            if (cp > VW + BUFFER) cardPos[i] -= totalPos + GAP;
         });
-        let closestCard = null;
-        let minDiff = Infinity;
+        
         cards.forEach((c, i) => {
-            const cx = cardX[i] + offset;
-            const cw = w(i);
-            const mid = cx + cw / 2;
-            const diff = Math.abs(mid - VW / 2);
-            if (diff < minDiff) { minDiff = diff; closestCard = c; }
-            c.style.left = cx + 'px';
+            const cp = cardPos[i] + offset;
+            const size = w(i % N);
+            const viewSize = VW;
+            const mid = cp + size / 2;
+            c.style.left = cp + 'px';
             const pan = c.querySelector('.pan');
-            if (pan) pan.style.transform = `translateX(${(cx + cw / 2 - VW / 2) * 0.01}px)`;
+            if (pan) pan.style.transform = `translateX(${(mid - viewSize / 2) * 0.01}px)`;
         });
-        if (closestCard && isMobile) {
-            const workIdx = parseInt(closestCard.dataset.workIdx);
-            const work = carouselWorks[workIdx];
-            if (titleEl.dataset.currentTitle !== work.title) {
-                titleEl.dataset.currentTitle = work.title;
-                titleEl.innerHTML = `<div class="project-subheading">Selected Work</div>${work.title}`;
-                
-                // Update background for mobile since hover is disabled
-                bgImg.src = `${basePath + 'covers/' + work.img}`;
-                bgBlur.style.opacity = '0.2';
-            }
-        }
     }());
 
     setInterval(() => {
@@ -432,6 +468,8 @@ function initWorksList() {
         listContainer.appendChild(li);
 
         a.addEventListener('mouseenter', () => {
+            const isTouch = window.innerWidth <= 1024;
+            if (isTouch) return;
             const imgName = li.getAttribute('data-img');
             if (imgName && hoverImg && hoverBg && hoverContainer) {
                 const fullPath = basePath + 'covers/' + imgName;
@@ -441,6 +479,8 @@ function initWorksList() {
             }
         });
         a.addEventListener('mouseleave', () => {
+            const isTouch = window.innerWidth <= 1024;
+            if (isTouch) return;
             if (hoverContainer) hoverContainer.classList.remove('active');
         });
     });

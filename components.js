@@ -13,6 +13,17 @@ const getBasePath = () => {
 
 const basePath = getBasePath();
 
+// Global touch tracking for mobile interaction optimizations
+let touchStartX = 0;
+let touchStartY = 0;
+let touchStartTime = 0;
+
+window.addEventListener('touchstart', (e) => {
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+    touchStartTime = Date.now();
+}, { passive: true });
+
 function injectAboutModal() {
     if (document.querySelector('.about-modal')) return;
     const modalHTML = `
@@ -226,7 +237,7 @@ function initWorksTrack() {
                 bgBlur.style.opacity = '0';
                 cards.forEach(c => c.classList.remove('dimmed'));
             });
-            card.addEventListener('click', (e) => {
+            const handleProjectClick = (e) => {
                 if (document.body.classList.contains('project-opening')) return;
                 
                 const ci = cards.indexOf(card);
@@ -296,7 +307,23 @@ function initWorksTrack() {
                         }, 200);
                     }
                 });
+            };
+
+            card.addEventListener('click', (e) => handleProjectClick(e));
+            
+            // Fast-tap for mobile to bypass click delay
+            card.addEventListener('touchend', (e) => {
+                if (!isMobile) return;
+                const dx = Math.abs(e.changedTouches[0].clientX - touchStartX);
+                const dy = Math.abs(e.changedTouches[0].clientY - touchStartY);
+                const dt = Date.now() - touchStartTime;
+                // If it's a fast tap without significant movement, trigger instantly
+                if (dx < 10 && dy < 10 && dt < 300) {
+                    e.preventDefault();
+                    handleProjectClick(e);
+                }
             });
+
             stage.appendChild(card);
             cards.push(card);
         });
@@ -450,20 +477,22 @@ function initWorksTrack() {
 
     window.addEventListener('wheel', e => { if (spinning && !isVertical) vel += e.deltaY * 0.05; });
 
-    let touchStartX = 0;
-    let touchStartY = 0;
-    window.addEventListener('touchstart', e => {
-        if (!spinning || isVertical) return;
-        touchStartX = e.touches[0].clientX;
-        touchStartY = e.touches[0].clientY;
-    }, {passive: true});
 
     window.addEventListener('touchmove', e => {
         if (!spinning || isVertical) return;
         const currentX = e.touches[0].clientX;
         const currentY = e.touches[0].clientY;
         const dx = touchStartX - currentX;
+        const dy = touchStartY - currentY;
         
+        // Prevent default vertical scrolling on the home page
+        // Only prevent if movement is significant to avoid swallowing tiny taps
+        if (!document.body.classList.contains('scrollable')) {
+            if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+                if (e.cancelable) e.preventDefault();
+            }
+        }
+
         // Horizontal swiping only accounts for horizontal movement (dx)
         // INCREASED sensitivity for smoother glides
         vel += dx * 0.25;
@@ -475,7 +504,7 @@ function initWorksTrack() {
 
         touchStartX = currentX;
         touchStartY = currentY;
-    }, {passive: true});
+    }, {passive: false});
 
     const BUFFER = 600;
     (function loop() {
@@ -617,6 +646,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (window.location.pathname.includes('/work/')) {
         document.body.classList.add('scrollable');
+        document.documentElement.classList.add('scrollable');
     }
 
     const isPlay = window.location.pathname.includes('/play/');
@@ -648,4 +678,17 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('click', unlockAudio);
     window.addEventListener('touchstart', unlockAudio);
     window.addEventListener('wheel', unlockAudio);
+
+    // Fast-tap for navigation links to bypass 300ms click delay
+    document.querySelectorAll('.main-nav a, .mobile-spatial-nav a').forEach(link => {
+        link.addEventListener('touchend', (e) => {
+            const dx = Math.abs(e.changedTouches[0].clientX - touchStartX);
+            const dy = Math.abs(e.changedTouches[0].clientY - touchStartY);
+            const dt = Date.now() - touchStartTime;
+            if (dx < 10 && dy < 10 && dt < 300) {
+                e.preventDefault();
+                link.click();
+            }
+        });
+    });
 });

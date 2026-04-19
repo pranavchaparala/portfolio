@@ -15,6 +15,7 @@ html, body {
     width: 100vw;
     overflow-x: hidden; /* Prevent desktop-view scaling issues on mobile */
     overflow-y: auto; 
+    touch-action: pan-y; /* Prevent browser from intercepting horizontal swipes */
 }
 
 body {
@@ -77,8 +78,10 @@ body.loading-page footer {
     white-space: nowrap;
 }
 
-.main-nav a:hover {
-    opacity: 0.4;
+@media (hover: hover) {
+    .main-nav a:hover {
+        opacity: 0.4;
+    }
 }
 
 .active-link {
@@ -197,6 +200,8 @@ body.loading-page footer {
 #overlay {
     position: fixed;
     inset: 0;
+    width: 100vw;
+    height: 100vh;
     z-index: 9999;
     pointer-events: none;
 }
@@ -347,8 +352,14 @@ body.page-loaded #active-project-title {
     gap: 2px;
 }
 
-#work-list li:hover {
-    opacity: 0.4;
+@media (hover: hover) {
+    #work-list li:hover {
+        opacity: 0.4;
+    }
+    
+    .back-btn-center:hover {
+        opacity: 0.5;
+    }
 }
 
 .mobile-work-cover {
@@ -536,14 +547,14 @@ body.page-leaving #gallery-wrap {
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.05em;
+        /* Ensure no hover transition on mobile to prevent double-tap issues */
     }
 
     .nav-top-left { top: 16px; left: 16px; }
     .nav-top-right { top: 16px; right: 16px; }
     .nav-top-center { 
         top: 16px; 
-        left: 50%; 
-        transform: translateX(-50%); 
+        right: 80px; /* Moved closer to Play on the right */ 
         font-size: 11px !important;
     }
     .nav-bottom-left { bottom: 16px; left: 16px; }

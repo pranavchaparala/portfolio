@@ -1004,8 +1004,8 @@ body.page-leaving #gallery-wrap {
     }
     .about-content .three-col-text,
     .about-content .two-col-text {
-        grid-template-columns: 1fr;
-        gap: 12px; /* Tighter grid gaps */
+        grid-template-columns: 1fr 1fr; /* Switched from 1fr to avoid long scrolls */
+        gap: 12px 20px; /* Tighter grid gaps */
     }
 }
 

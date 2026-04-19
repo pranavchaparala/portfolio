@@ -229,6 +229,8 @@ function initWorksTrack() {
             card.addEventListener('click', (e) => {
                 if (document.body.classList.contains('project-opening')) return;
                 
+                const ci = cards.indexOf(card);
+                
                 if (isVertical) {
                     document.body.classList.add('project-opening');
                     document.body.classList.remove('page-loaded');
@@ -239,7 +241,29 @@ function initWorksTrack() {
                     return;
                 }
 
-                const ci = cards.indexOf(card);
+                // --- MOBILE TWO-TAP FOCUS ---
+                if (isMobile) {
+                    if (window.focusedMobileCardIndex !== ci) {
+                        window.focusedMobileCardIndex = ci;
+                        vel = 0;
+                        const size = w(ci % N);
+                        const targetOffset = VW / 2 - (cardPos[ci] + size / 2);
+                        let proxy = { o: offset };
+                        
+                        gsap.to(proxy, {
+                            o: targetOffset,
+                            duration: 0.5,
+                            ease: 'power2.out',
+                            onUpdate: () => { offset = proxy.o; }
+                        });
+                        
+                        titleEl.innerHTML = `<div class="project-subheading">Selected Work</div>${work.title}`;
+                        gsap.to(titleEl, { opacity: 1, duration: 0.3 });
+                        return; // Block navigation on first tap
+                    }
+                }
+                // -----------------------------
+
                 vel = 0;
                 const size = w(ci % N);
                 const targetOffset = VW / 2 - (cardPos[ci] + size / 2);
@@ -356,7 +380,7 @@ function initWorksTrack() {
             gsap.to(mobileNav, { opacity: 1, duration: instant ? 0 : 0.8 });
             mobileNav.style.pointerEvents = 'auto';
         }
-        if (titleEl) gsap.to(titleEl, { opacity: 1, duration: instant ? 0 : 0.8 });
+        if (titleEl && !isMobile) gsap.to(titleEl, { opacity: 1, duration: instant ? 0 : 0.8 });
         
         const footer = document.querySelector('footer');
         if (footer) gsap.to(footer, { opacity: 1, duration: instant ? 0 : 0.8, onComplete: () => footer.style.pointerEvents = 'auto' });
@@ -425,6 +449,11 @@ function initWorksTrack() {
         // Horizontal swiping only accounts for horizontal movement (dx)
         vel += dx * 0.15;
         
+        if (Math.abs(dx) > 2) {
+            window.focusedMobileCardIndex = -1;
+            if (isMobile && titleEl) gsap.to(titleEl, { opacity: 0, duration: 0.2 });
+        }
+
         touchStartX = currentX;
         touchStartY = currentY;
     }, {passive: true});
@@ -480,9 +509,8 @@ function initWorksTrack() {
             const viewSize = VW;
             const mid = cp + size / 2;
             c.style.left = cp + 'px';
-            // Vertical parallax: subtle Y shift based on distance from center (disabled on mobile)
-            const distFromCenter = (mid - viewSize / 2) / viewSize;
-            c.style.transform = isMobile ? 'translateY(0)' : `translateY(${distFromCenter * 30}px)`;
+            // Vertical parallax completely removed for purely horizontal interaction
+            c.style.transform = 'translateY(0)';
             const pan = c.querySelector('.pan');
             if (pan) pan.style.transform = `translateX(${(mid - viewSize / 2) * 0.01}px)`;
         });
@@ -518,15 +546,6 @@ function initWorksList() {
         textSpan.className = 'work-title';
         textSpan.textContent = work.title;
         a.appendChild(textSpan);
-
-        // Add subtitle tags
-        if (work.tags && work.tags.length > 0) {
-            const tagsSpan = document.createElement('span');
-            tagsSpan.className = 'project-subheading'; // Use existing styled class for small faint text
-            tagsSpan.style.margin = '0'; // neutralize any bottom margin inside flex layout
-            tagsSpan.textContent = work.tags.join(', ');
-            a.appendChild(tagsSpan);
-        }
 
         li.appendChild(a);
         listContainer.appendChild(li);

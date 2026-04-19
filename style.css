@@ -308,7 +308,7 @@ footer {
 }
 
 .project-subheading {
-    font-size: 10px;
+    font-size: 12px;
     opacity: 0.4;
     margin-bottom: 8px;
     font-weight: 400;
@@ -339,7 +339,7 @@ body.page-loaded #active-project-title {
 }
 
 #work-list li a {
-    font-size: 11px;
+    font-size: 13px; /* Slightly larger */
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -347,9 +347,8 @@ body.page-loaded #active-project-title {
     transition: opacity 0.2s ease;
     text-decoration: none;
     color: #000;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
+    display: block;
+    margin-bottom: 8px; /* More spacing between items */
 }
 
 @media (hover: hover) {
@@ -542,11 +541,13 @@ body.page-leaving #gallery-wrap {
         position: fixed;
         z-index: 10001;
         text-decoration: none;
-        color: #000;
+        color: #fff;
         font-size: 11px;
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.05em;
+        mix-blend-mode: difference;
+        touch-action: manipulation;
         /* Ensure no hover transition on mobile to prevent double-tap issues */
     }
 
@@ -727,6 +728,14 @@ body.page-leaving #gallery-wrap {
         margin-left: 0;
         width: 100%;
         padding: 80px 16px 0 16px;
+        gap: 4px; /* Bring them closer */
+        justify-content: flex-start; /* Explicitly left align */
+    }
+
+    .filter-btn {
+        margin-right: 8px !important; /* Overriding the massive 18px margin from desktop */
+        padding: 10px 4px !important;
+        touch-action: manipulation;
     }
 }
 
@@ -827,15 +836,15 @@ body.page-leaving #gallery-wrap {
 }
 
 .grid-title {
-    font-size: 18px;
-    font-weight: 600;
+    font-size: 14px;
+    font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.1em;
 }
 
 .grid-tags {
     display: flex;
-    gap: 8px;
+    gap: 4px;
     flex-wrap: wrap;
 }
 

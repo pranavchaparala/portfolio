@@ -480,9 +480,9 @@ function initWorksTrack() {
             const viewSize = VW;
             const mid = cp + size / 2;
             c.style.left = cp + 'px';
-            // Vertical parallax: subtle Y shift based on distance from center
+            // Vertical parallax: subtle Y shift based on distance from center (disabled on mobile)
             const distFromCenter = (mid - viewSize / 2) / viewSize;
-            c.style.transform = `translateY(${distFromCenter * 30}px)`;
+            c.style.transform = isMobile ? 'translateY(0)' : `translateY(${distFromCenter * 30}px)`;
             const pan = c.querySelector('.pan');
             if (pan) pan.style.transform = `translateX(${(mid - viewSize / 2) * 0.01}px)`;
         });

@@ -656,8 +656,8 @@ body.page-leaving #gallery-wrap {
         margin-right: auto;
     }
 
-    /* Force Project Pages to scroll natively on mobile */
-    body {
+    /* Work page and project page specific scrolling */
+    body.scrollable {
         overflow-y: auto !important;
     }
 

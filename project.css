@@ -11,6 +11,7 @@
             background-color: #ffffff;
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
             overflow-x: hidden;
+            overflow-y: auto !important; /* Guarantee scrolling on individual projects */
         }
 
         /* --- 2. NAVIGATION & TOP FADE --- */

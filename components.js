@@ -290,10 +290,12 @@ function initWorksTrack() {
 
                 // --- MOBILE TWO-TAP FOCUS ---
                 if (isMobile) {
-                    if (window.focusedMobileCardIndex !== ci) {
+                    const mid = cardPos[ci] + offset + size / 2;
+                    const isCentered = Math.abs(mid - VW / 2) < 40;
+
+                    if (window.focusedMobileCardIndex !== ci && !isCentered) {
                         window.focusedMobileCardIndex = ci;
                         vel = 0;
-                        const size = w(ci % N);
                         const targetOffset = VW / 2 - (cardPos[ci] + size / 2);
                         let proxy = { o: offset };
                         
@@ -623,6 +625,12 @@ function initWorksTrack() {
         if (isMobile && currentCenterIdx !== window.lastHapticIdx) {
             if (window.lastHapticIdx !== undefined && Math.abs(vel) > 0.5) triggerHaptic();
             window.lastHapticIdx = currentCenterIdx;
+            
+            // SYNCHRONIZATION: Update focus index so a single tap opens the project
+            // if it's already centered and showing the title.
+            if (Math.abs(vel) < 2) {
+                window.focusedMobileCardIndex = currentCenterIdx;
+            }
         }
     }());
 

@@ -336,9 +336,9 @@ function initWorksTrack() {
                                 if (pan) pan.style.setProperty('opacity', '1', 'important');
                             }
                         });
-                        gsap.to(tl, {
-                            progress: 1,
-                            duration: 1.2,
+                        // Standalone exit animation (decoupled from intro timeline 'tl')
+                        gsap.to({}, {
+                            duration: 1.0,
                             ease: 'power4.inOut',
                             onComplete: () => {
                                 // Native View Transition API (standard for modern browsers)

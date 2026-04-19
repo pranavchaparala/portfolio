@@ -7,19 +7,23 @@
     cursor: none;
 }
 
-html, body {
+html,
+body {
     background-color: #ffffff;
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
     font-size: 18px;
     height: 100vh;
     width: 100vw;
-    overflow-x: hidden; /* Prevent desktop-view scaling issues on mobile */
-    overflow-y: auto; 
-    touch-action: pan-y; /* Prevent browser from intercepting horizontal swipes */
+    overflow-x: hidden;
+    /* Prevent desktop-view scaling issues on mobile */
+    overflow-y: auto;
+    touch-action: pan-y;
+    /* Prevent browser from intercepting horizontal swipes */
 }
 
 body {
-    overflow: hidden; /* Reset overflow for home page; project/work will override */
+    overflow: hidden;
+    /* Reset overflow for home page; project/work will override */
 }
 
 body.scrollable {
@@ -64,7 +68,8 @@ body.loading-page footer {
 }
 
 .mobile-only {
-    display: none; /* Hidden on desktop by default, shown via media query */
+    display: none;
+    /* Hidden on desktop by default, shown via media query */
 }
 
 .main-nav a {
@@ -249,7 +254,8 @@ body.loading-page footer {
 footer {
     position: fixed;
     width: 100%;
-    padding: 0 16px 16px 16px; /* Matched to nav 16px */
+    padding: 0 16px 16px 16px;
+    /* Matched to nav 16px */
     display: flex;
     justify-content: space-between;
     z-index: 10000;
@@ -324,8 +330,10 @@ body.page-loaded #active-project-title {
 /* --- 5. WORK PAGE LIST --- */
 #work-list {
     position: fixed;
-    top: 60px; /* Aligned to filter bar */
-    left: 16px; /* Match Navbar left padding */
+    top: 60px;
+    /* Aligned to filter bar */
+    left: 16px;
+    /* Match Navbar left padding */
     z-index: 2000;
 }
 
@@ -339,7 +347,8 @@ body.page-loaded #active-project-title {
 }
 
 #work-list li a {
-    font-size: 13px; /* Slightly larger */
+    font-size: 13px;
+    /* Slightly larger */
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -348,14 +357,15 @@ body.page-loaded #active-project-title {
     text-decoration: none;
     color: #000;
     display: block;
-    margin-bottom: 8px; /* More spacing between items */
+    margin-bottom: 8px;
+    /* More spacing between items */
 }
 
 @media (hover: hover) {
     #work-list li:hover {
         opacity: 0.4;
     }
-    
+
     .back-btn-center:hover {
         opacity: 0.5;
     }
@@ -524,6 +534,7 @@ body.page-leaving #gallery-wrap {
 
 /* --- 9. MOBILE & TABLET (Unified) --- */
 @media (max-width: 1024px) {
+
     /* Desktop Nav Hide */
     .desktop-only {
         display: none !important;
@@ -551,23 +562,38 @@ body.page-leaving #gallery-wrap {
         /* Ensure no hover transition on mobile to prevent double-tap issues */
     }
 
-    .nav-top-left { top: 16px; left: 16px; }
-    .nav-top-right { top: 16px; right: 16px; }
-    .nav-top-center { 
-        top: 16px; 
-        right: 80px; /* Moved closer to Play on the right */ 
+    .nav-top-left {
+        top: 16px;
+        left: 16px;
+    }
+
+    .nav-top-right {
+        top: 16px;
+        right: 16px;
+    }
+
+    .nav-top-center {
+        top: 16px;
+        right: 80px;
+        /* Moved closer to Play on the right */
         font-size: 11px !important;
     }
-    .nav-bottom-left { bottom: 16px; left: 16px; }
+
+    .nav-bottom-left {
+        bottom: 16px;
+        left: 16px;
+    }
 
     /* Footer Unification */
     footer {
         display: flex !important;
-        opacity: 0; /* Default hidden, but shown in revealCarousel */
+        opacity: 0;
+        /* Default hidden, but shown in revealCarousel */
         padding: 16px !important;
         pointer-events: none;
         position: fixed;
-        bottom: 15vh; /* Moved higher per request */
+        bottom: 15vh;
+        /* Moved higher per request */
         width: 100vw;
         left: 0;
         justify-content: center !important;
@@ -579,24 +605,28 @@ body.page-leaving #gallery-wrap {
         text-align: center !important;
     }
 
-    .footer-right, #clock {
+    .footer-right,
+    #clock {
         display: none !important;
     }
 
-    .footer-left, .footer-right {
+    .footer-left,
+    .footer-right {
         font-size: 11px;
         font-weight: 600;
         letter-spacing: 0.05em;
         line-height: 1.4;
     }
 
-    .footer-left { max-width: 90vw; }
+    .footer-left {
+        max-width: 90vw;
+    }
 
     /* Work List Overrides */
     body.scrollable #work-list {
         display: none !important;
     }
-    
+
     #work-list {
         /* This stays for project pages */
         display: block !important;
@@ -608,7 +638,9 @@ body.page-leaving #gallery-wrap {
         z-index: 50;
     }
 
-    .section-label { display: none !important; }
+    .section-label {
+        display: none !important;
+    }
 
     #work-list ul {
         display: grid;
@@ -635,17 +667,21 @@ body.page-leaving #gallery-wrap {
     }
 
     /* Carousel position */
-    .card, .fake {
-        top: 48% !important;
+    .card,
+    .fake {
+        top: 42% !important;
+        /* Decreased from 48% to shift higher on mobile */
     }
 
-    .card.p, .fake.p {
+    .card.p,
+    .fake.p {
         width: 220px;
         height: 308px;
         margin-top: -154px;
     }
 
-    .card.l, .fake.l {
+    .card.l,
+    .fake.l {
         width: 280px;
         height: 210px;
         margin-top: -105px;
@@ -653,7 +689,7 @@ body.page-leaving #gallery-wrap {
 
     /* Active Project Title (Mobile Overrides) */
     #active-project-title {
-        top: 15%; 
+        top: 15%;
         opacity: 0;
     }
 
@@ -666,6 +702,7 @@ body.page-leaving #gallery-wrap {
 
 /* Disable Hover and Custom Cursor on Mobile Devices */
 @media (hover: none) and (pointer: coarse) {
+
     #cursor-svg,
     #cursor-square-loader {
         display: none !important;
@@ -695,12 +732,13 @@ body.page-leaving #gallery-wrap {
     inset: 0;
     z-index: 0;
     opacity: 0;
-    background: #ffffff; /* White background behind the blur */
+    background: #ffffff;
+    /* White background behind the blur */
     transition: opacity 0.6s ease;
     pointer-events: none;
 }
 
-#work-bg-blur img, 
+#work-bg-blur img,
 #hover-bg-blur {
     width: 115%;
     height: 115%;
@@ -708,7 +746,8 @@ body.page-leaving #gallery-wrap {
     top: -7.5%;
     left: -7.5%;
     object-fit: cover;
-    filter: blur(30px) brightness(1.2); /* Increased brightness for white look */
+    filter: blur(30px) brightness(1.2);
+    /* Increased brightness for white look */
 }
 
 /* Filter Bar */
@@ -720,7 +759,8 @@ body.page-leaving #gallery-wrap {
     width: calc(100% - 350px);
     flex-wrap: wrap;
     position: relative;
-    z-index: 2; /* Stays above blur */
+    z-index: 2;
+    /* Stays above blur */
 }
 
 @media (max-width: 1024px) {
@@ -728,12 +768,15 @@ body.page-leaving #gallery-wrap {
         margin-left: 0;
         width: 100%;
         padding: 80px 16px 0 16px;
-        gap: 4px; /* Bring them closer */
-        justify-content: flex-start; /* Explicitly left align */
+        gap: 4px;
+        /* Bring them closer */
+        justify-content: flex-start;
+        /* Explicitly left align */
     }
 
     .filter-btn {
-        margin-right: 8px !important; /* Overriding the massive 18px margin from desktop */
+        margin-right: 8px !important;
+        /* Overriding the massive 18px margin from desktop */
         padding: 10px 4px !important;
         touch-action: manipulation;
     }
@@ -742,7 +785,8 @@ body.page-leaving #gallery-wrap {
 .filter-btn {
     background: none;
     border: none;
-    padding: 14px 6px; /* Increased vertical padding for touch */
+    padding: 14px 6px;
+    /* Increased vertical padding for touch */
     margin-right: 18px;
     font-size: 11px;
     font-weight: 600;
@@ -773,7 +817,8 @@ body.page-leaving #gallery-wrap {
     width: calc(100% - 350px);
     margin-left: 350px;
     position: relative;
-    z-index: 2; /* Increased to stay above blur */
+    z-index: 2;
+    /* Increased to stay above blur */
 }
 
 @media (max-width: 1024px) {

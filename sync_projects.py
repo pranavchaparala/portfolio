@@ -39,6 +39,9 @@ def sync():
         title = extract_title(content)
         # Look for cover image in meta tag, otherwise check for cover.png/jpg
         img = extract_meta(content, 'project-img')
+        tags_raw = extract_meta(content, 'project-tags')
+        tags = [t.strip() for t in tags_raw.split(',')] if tags_raw else []
+        description = extract_meta(content, 'project-description') or "Content coming soon."
         
         if not img:
             for ext in ['png', 'jpg', 'jpeg', 'webp']:
@@ -50,16 +53,13 @@ def sync():
         if not img:
             img = DEFAULT_COVER # We could improve this by parsing current projects.js first
             
-        # Extract content between <!-- START_CONTENT --> and <!-- END_CONTENT --> if present
-        # Or just use the h1 and first p as a teaser? 
-        # Actually, let's keep it simple: just the link and metadata for now.
-        
         projects_data.append({
             "id": folder,
             "title": title,
             "img": img,
             "link": f"projects/{folder}/index.html",
-            "content": f"<h1>{title}</h1><p>Content loaded from project folder.</p>" # Placeholder
+            "tags": tags,
+            "content": f"<h1>{title}</h1><p>{description}</p>"
         })
 
     # Read the current projects.js to preserve 'content' if it's there?

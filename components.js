@@ -28,11 +28,46 @@ function injectAboutModal() {
     if (document.querySelector('.about-modal')) return;
     const modalHTML = `
         <div class="about-modal" onclick="closeAboutModal()">
-            <div class="about-content">
-                <h1>Pranav Chaparala</h1>
-                <p>I am a Product Designer with experience in crafting impactful products. Currently Pursuing an MFA in Design & Technology at Parsons School of Design.</p>
-                <p>My work focuses on the intersection of human-centered design and emerging technologies, striving to create seamless digital experiences that solve real-world problems.</p>
-                <p style="font-size: 10px; opacity: 0.4; margin-top: 40px;">Click anywhere to close</p>
+            <div class="about-content" onclick="event.stopPropagation()">
+                <div class="two-col-text" style="align-items: flex-end; margin-bottom: 0;">
+                    <div>
+                        <h1>Pranav Chaparala</h1>
+                        <p style="margin-bottom: 8px; font-size: 14px; line-height: 1.4;">Product Designer based in NYC currently pursuing an MFA in Design & Technology at Parsons School of Design.</p>
+                        <p style="margin-bottom: 0; font-size: 14px; line-height: 1.4; opacity: 0.8;">My work focuses on the intersection of human-centered design and emerging technologies, striving to create seamless digital experiences that solve real-world problems.</p>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 4px; align-items: flex-end;">
+                        <span class="meta-value" style="font-size: 14px;"><a href="mailto:pranavchaparala@gmail.com" style="color: inherit; text-decoration: none;">Email ↗</a></span>
+                        <span class="meta-value" style="font-size: 14px;"><a href="https://drive.google.com/uc?export=download&id=1ry9SKoEx5cpskW3K9lFgc1BD4zF4ZJUA" target="_blank" style="color: inherit; text-decoration: none;">Resume ↗</a></span>
+                        <span class="meta-value" style="font-size: 14px;"><a href="https://linkedin.com/in/pranavchaparala" target="_blank" style="color: inherit; text-decoration: none;">LinkedIn ↗</a></span>
+                    </div>
+                </div>
+
+                <hr style="margin: 20px 0;">
+
+                <div class="three-col-text">
+                    <div>
+                        <h2>Education</h2>
+                        <p style="font-size: 13px; margin-bottom: 4px;"><b>Parsons School of Design</b><br>New York (2024 - 2026)</p>
+                        <p style="font-size: 13px; margin-bottom: 0;"><b>NIFT</b><br>India (2019 - 2023)</p>
+                    </div>
+                    <div>
+                        <h2>Work</h2>
+                        <p style="font-size: 13px; margin-bottom: 4px;">DigitalOcean</p>
+                        <p style="font-size: 13px; margin-bottom: 4px;">OnePlus</p>
+                        <p style="font-size: 13px; margin-bottom: 4px;">Noise</p>
+                        <p style="font-size: 13px; margin-bottom: 4px;">WTFRuchit Studios</p>
+                        <p style="font-size: 13px; margin-bottom: 0;">SĀR Studio</p>
+                    </div>
+                    <div>
+                        <h2>Recognition</h2>
+                        <p style="font-size: 13px; margin-bottom: 4px;">NIFT Academy Award ‘23</p>
+                        <p style="font-size: 13px; margin-bottom: 4px;">Meritorious Student ‘23</p>
+                        <p style="font-size: 13px; margin-bottom: 4px;">Salesforce Design Days</p>
+                        <p style="font-size: 13px; margin-bottom: 0;">Spectrum ‘22 Lead</p>
+                    </div>
+                </div>
+
+                <p style="font-size: 9px; opacity: 0.3; margin-top: 40px; text-align: center; width: 100%;">Click anywhere outside to close</p>
             </div>
         </div>
     `;
@@ -298,13 +333,25 @@ function initWorksTrack() {
                                 if (pan) pan.style.setProperty('opacity', '1', 'important');
                             }
                         });
-                        setTimeout(() => {
-                            document.body.classList.remove('page-loaded');
-                            document.body.classList.add('page-leaving');
-                            setTimeout(() => {
-                                window.location.href = basePath + work.link;
-                            }, 600);
-                        }, 200);
+                        gsap.to(tl, {
+                            progress: 1,
+                            duration: 1.2,
+                            ease: 'power4.inOut',
+                            onComplete: () => {
+                                // Native View Transition API (standard for modern browsers)
+                                if (document.startViewTransition) {
+                                    // Assign a transition name to the specific card for the shared element effect
+                                    card.style.viewTransitionName = 'active-project-card';
+                                    
+                                    document.startViewTransition(() => {
+                                        window.location.href = basePath + work.link;
+                                    });
+                                } else {
+                                    // Fallback for older browsers
+                                    window.location.href = basePath + work.link;
+                                }
+                            }
+                        });
                     }
                 });
             };

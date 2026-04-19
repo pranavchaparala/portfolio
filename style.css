@@ -7,13 +7,18 @@
     cursor: none;
 }
 
-body {
+html, body {
     background-color: #ffffff;
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
     font-size: 18px;
     height: 100vh;
     width: 100vw;
-    overflow: hidden;
+    overflow-x: hidden; /* Prevent desktop-view scaling issues on mobile */
+    overflow-y: auto; 
+}
+
+body {
+    overflow: hidden; /* Reset overflow for home page; project/work will override */
 }
 
 body.scrollable {
@@ -130,6 +135,8 @@ body.loading-page footer {
 #stage {
     position: fixed;
     inset: 0;
+    width: 100vw;
+    height: 100vh;
     z-index: 10;
     overflow: hidden;
     pointer-events: none;
@@ -792,7 +799,7 @@ body.page-leaving #gallery-wrap {
 }
 
 .grid-title {
-    font-size: 14px;
+    font-size: 18px;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.1em;

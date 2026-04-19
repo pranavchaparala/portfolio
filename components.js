@@ -125,8 +125,15 @@ function initWorksTrack() {
     const bgImg = document.getElementById('bg-img');
 
     let blurEnabled = false;
-    const VW = window.innerWidth;
-    const VH = window.innerHeight;
+    let VW = window.innerWidth;
+    let VH = window.innerHeight;
+
+    window.addEventListener('resize', () => {
+        VW = window.innerWidth;
+        VH = window.innerHeight;
+        // Recalculate horizontal offsets if needed
+        if (!isVertical) applyPositions();
+    });
 
     const carouselWorks = worksData.slice(0, 6);
     const N = carouselWorks.length;

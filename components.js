@@ -28,6 +28,7 @@ function injectAboutModal() {
     if (document.querySelector('.about-modal')) return;
     const modalHTML = `
         <div class="about-modal" onclick="closeAboutModal()">
+            <button class="modal-close-btn" onclick="closeAboutModal()">Close [X]</button>
             <div class="about-content" onclick="event.stopPropagation()">
                 <div class="two-col-text" style="align-items: flex-end; margin-bottom: 0;">
                     <div>

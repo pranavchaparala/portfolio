@@ -23,17 +23,6 @@ const projectsData = [
         "content": "<h1>Echoes of Presence</h1><p>An evolving generative art installation reconciling our relationship to AI worlds.</p>"
     },
     {
-        "id": "lectrixEV",
-        "title": "Lectrix EV",
-        "img": "lectrix.png",
-        "link": "projects/lectrixEV/index.html",
-        "tags": [
-            "Product Design",
-            "Branding"
-        ],
-        "content": "<h1>Lectrix EV</h1><p>Reimaging the Lectrix app for a smarter EV scooter experience.</p>"
-    },
-    {
         "id": "lunaring",
         "title": "Lunaring",
         "img": "lunaring.png",
@@ -62,6 +51,17 @@ const projectsData = [
             "UX"
         ],
         "content": "<h1>Doodle Forest</h1><p>Plant flora and spawn fauna in a generative 10x10 grid using the Google Quick Draw dataset.</p>"
+    },
+    {
+        "id": "lectrixEV",
+        "title": "Lectrix EV",
+        "img": "lectrix.png",
+        "link": "projects/lectrixEV/index.html",
+        "tags": [
+            "Product Design",
+            "Branding"
+        ],
+        "content": "<h1>Lectrix EV</h1><p>Reimaging the Lectrix app for a smarter EV scooter experience.</p>"
     },
     {
         "id": "gudz",

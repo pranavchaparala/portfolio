@@ -277,6 +277,7 @@ function initWorksTrack() {
                 if (document.body.classList.contains('project-opening')) return;
                 
                 const ci = cards.indexOf(card);
+                const size = w(ci % N);
                 
                 if (isVertical) {
                     document.body.classList.add('project-opening');
@@ -314,7 +315,6 @@ function initWorksTrack() {
                 // -----------------------------
 
                 vel = 0;
-                const size = w(ci % N);
                 const targetOffset = VW / 2 - (cardPos[ci] + size / 2);
                 let proxy = { o: offset };
 

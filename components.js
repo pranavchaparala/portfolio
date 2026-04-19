@@ -430,6 +430,24 @@ function initWorksTrack() {
         revealCarousel(true);
     }
 
+    // --- ZERO-DEPENDENCY HAPTIC ENGINE ---
+    const triggerHaptic = () => {
+        if (navigator.vibrate) {
+            navigator.vibrate(10); // Standard Android tick
+            return;
+        }
+        // iOS Safari 17.4+ native switch hack
+        const cb = document.createElement('input');
+        cb.setAttribute('type', 'checkbox');
+        cb.setAttribute('switch', '');
+        cb.style.position = 'absolute';
+        cb.style.opacity = '0';
+        cb.style.pointerEvents = 'none';
+        document.body.appendChild(cb);
+        cb.click();
+        cb.remove();
+    };
+
     window.addEventListener('wheel', e => { if (spinning && !isVertical) vel += e.deltaY * 0.05; });
 
     let touchStartX = 0;
@@ -447,7 +465,8 @@ function initWorksTrack() {
         const dx = touchStartX - currentX;
         
         // Horizontal swiping only accounts for horizontal movement (dx)
-        vel += dx * 0.15;
+        // INCREASED sensitivity for smoother glides
+        vel += dx * 0.25;
         
         if (Math.abs(dx) > 2) {
             window.focusedMobileCardIndex = -1;
@@ -494,7 +513,7 @@ function initWorksTrack() {
         }
 
         // DESKTOP INFINITE GSAP LOOP MATH
-        vel *= 0.90;
+        vel *= 0.94; // REDUCED FRICTION (slides longer from a lighter flick, previously 0.90)
         offset -= vel;
         cards.forEach((c, i) => {
             let cp = cardPos[i] + offset;
@@ -503,6 +522,9 @@ function initWorksTrack() {
             if (cp > VW + BUFFER) cardPos[i] -= totalPos + GAP;
         });
         
+        let minDiff = Infinity;
+        let currentCenterIdx = -1;
+
         cards.forEach((c, i) => {
             const cp = cardPos[i] + offset;
             const size = w(i % N);
@@ -513,7 +535,19 @@ function initWorksTrack() {
             c.style.transform = 'translateY(0)';
             const pan = c.querySelector('.pan');
             if (pan) pan.style.transform = `translateX(${(mid - viewSize / 2) * 0.01}px)`;
+            
+            // Calculate closest card for haptic feedback
+            const diff = Math.abs(mid - viewSize / 2);
+            if (diff < minDiff) {
+                minDiff = diff;
+                currentCenterIdx = i;
+            }
         });
+
+        if (isMobile && currentCenterIdx !== window.lastHapticIdx) {
+            if (window.lastHapticIdx !== undefined && Math.abs(vel) > 0.5) triggerHaptic();
+            window.lastHapticIdx = currentCenterIdx;
+        }
     }());
 
     setInterval(() => {

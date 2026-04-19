@@ -541,9 +541,8 @@ function initWorksTrack() {
             }
         }
 
-        // Horizontal swiping only accounts for horizontal movement (dx)
-        // INCREASED sensitivity for smoother glides
-        vel += dx * 0.25;
+        // Horizontal swiping sensitivity (reduced for more "friction" and control)
+        vel += dx * 0.18;
         
         if (Math.abs(dx) > 2) {
             window.focusedMobileCardIndex = -1;
@@ -589,8 +588,8 @@ function initWorksTrack() {
             return; // completely halt GSAP math processing for vertical
         }
 
-        // DESKTOP INFINITE GSAP LOOP MATH
-        vel *= 0.94; // REDUCED FRICTION (slides longer from a lighter flick, previously 0.90)
+        // DESKTOP INFINITE GSAP LOOP MATH (Increased friction for more control)
+        vel *= 0.91; 
         offset -= vel;
         cards.forEach((c, i) => {
             let cp = cardPos[i] + offset;

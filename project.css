@@ -144,6 +144,37 @@
             letter-spacing: 0.05em;
         }
 
+        .tagline {
+            font-size: 18px;
+            font-style: italic;
+            color: #707070;
+            margin-bottom: 24px;
+        }
+
+        .list-title {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .two-col-text {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin: 20px 0;
+        }
+
+        .quote-box {
+            font-size: 24px;
+            line-height: 1.4;
+            font-weight: 400;
+            margin: 80px 0;
+            letter-spacing: -0.01em;
+        }
+
         .list-section {
             margin-bottom: 40px;
             list-style: none;
@@ -367,6 +398,22 @@
             
             .img-grid > *, .gallery-grid > * {
                 margin-bottom: 0 !important;
+            }
+
+            .two-col-text {
+                grid-template-columns: 1fr !important;
+                gap: 20px !important;
+            }
+
+            .quote-box {
+                font-size: 18px !important;
+                margin: 40px 0 !important;
+                line-height: 1.4 !important;
+            }
+
+            .tagline {
+                font-size: 14px !important;
+                margin-bottom: 20px !important;
             }
 
             /* Ensure all navigational overlays and custom cursors explicitly un-render */

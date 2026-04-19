@@ -1014,10 +1014,10 @@ body.page-leaving #gallery-wrap {
     position: absolute;
     top: 20px;
     right: 20px;
-    font-size: 14px;
-    font-weight: 500;
+    font-size: 11px; /* Matched to mobile nav size */
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.05em;
     cursor: pointer;
     background: none;
     border: none;
@@ -1026,6 +1026,17 @@ body.page-leaving #gallery-wrap {
     opacity: 0.4;
     transition: opacity 0.2s ease;
     z-index: 100001;
+    font-family: inherit; /* Ensure same font as site */
+}
+
+.modal-hint {
+    display: block;
+}
+
+@media (max-width: 900px) {
+    .modal-hint {
+        display: none !important; /* Remove click anywhere on mobile */
+    }
 }
 
 @media (hover: hover) {

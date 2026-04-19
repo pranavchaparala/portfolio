@@ -68,7 +68,7 @@ function injectAboutModal() {
                     </div>
                 </div>
 
-                <p style="font-size: 9px; opacity: 0.3; margin-top: 40px; text-align: center; width: 100%;">Click anywhere outside to close</p>
+                <p class="modal-hint" style="font-size: 9px; opacity: 0.3; margin-top: 40px; text-align: center; width: 100%;">Click anywhere outside to close</p>
             </div>
         </div>
     `;

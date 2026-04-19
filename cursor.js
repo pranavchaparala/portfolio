@@ -24,6 +24,11 @@ function initCursor() {
         setTimeout(() => {
             if (hint) hint.classList.add('visible');
         }, 1000);
+
+        // Auto-hide after 5 seconds
+        setTimeout(() => {
+            hideHint();
+        }, 6000); // 1000ms delay + 5000ms duration
     }
 
     const hideHint = () => {

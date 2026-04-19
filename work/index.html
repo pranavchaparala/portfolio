@@ -27,9 +27,18 @@
             visibility: visible;
         }
 
-        #hover-image-container.active #hover-bg-blur {
+        #hover-bg-blur {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: blur(20px) brightness(0.9);
+            transform: scale(1.1);
+            z-index: 1;
             /* [ADJUST OPACITY HERE] - Background blur opacity when hovering projects */
-            opacity: 0.15; 
+            opacity: 0.25; 
         }
 
         /* 2. THE FLOATING PREVIEW IMAGE (for side list) */

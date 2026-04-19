@@ -49,7 +49,7 @@
         #work-list {
             position: fixed;
             top: 60px; /* Aligned to Work page sidebar */
-            left: 40px;
+            left: 16px; /* Match Navbar left padding */
             z-index: 2000;
         }
 

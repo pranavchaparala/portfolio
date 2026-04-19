@@ -421,9 +421,9 @@ function initWorksTrack() {
         const currentX = e.touches[0].clientX;
         const currentY = e.touches[0].clientY;
         const dx = touchStartX - currentX;
-        const dy = touchStartY - currentY;
         
-        vel += (dx + dy) * 0.15;
+        // Horizontal swiping only accounts for horizontal movement (dx)
+        vel += dx * 0.15;
         
         touchStartX = currentX;
         touchStartY = currentY;
@@ -518,6 +518,15 @@ function initWorksList() {
         textSpan.className = 'work-title';
         textSpan.textContent = work.title;
         a.appendChild(textSpan);
+
+        // Add subtitle tags
+        if (work.tags && work.tags.length > 0) {
+            const tagsSpan = document.createElement('span');
+            tagsSpan.className = 'project-subheading'; // Use existing styled class for small faint text
+            tagsSpan.style.margin = '0'; // neutralize any bottom margin inside flex layout
+            tagsSpan.textContent = work.tags.join(', ');
+            a.appendChild(tagsSpan);
+        }
 
         li.appendChild(a);
         listContainer.appendChild(li);

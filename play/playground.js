@@ -170,25 +170,35 @@ function updatePhysics() {
 function setupDragListeners() {
     if (!viewport) return;
 
-    viewport.onmousedown = (e) => {
+    const startDrag = (clientX, clientY) => {
         if (isFocused || isResetting || !isGridReady) return; 
         if (pendingZoomArgs) pendingZoomArgs = null;
         isDragging = true;
         velocityX = 0; velocityY = 0;
-        lastMouseX = e.clientX;
-        lastMouseY = e.clientY;
+        lastMouseX = clientX;
+        lastMouseY = clientY;
     };
 
-    window.onmousemove = (e) => {
+    const dragMove = (clientX, clientY) => {
         if (!isDragging || isFocused || isResetting || !isGridReady) return;
-        const dx = e.clientX - lastMouseX;
-        const dy = e.clientY - lastMouseY;
+        const dx = clientX - lastMouseX;
+        const dy = clientY - lastMouseY;
         targetX += dx; targetY += dy;
         velocityX = dx; velocityY = dy;
-        lastMouseX = e.clientX; lastMouseY = e.clientY;
+        lastMouseX = clientX; lastMouseY = clientY;
     };
 
-    window.onmouseup = () => { isDragging = false; };
+    const endDrag = () => { isDragging = false; };
+
+    // Mouse Events
+    viewport.onmousedown = (e) => startDrag(e.clientX, e.clientY);
+    window.onmousemove = (e) => dragMove(e.clientX, e.clientY);
+    window.onmouseup = endDrag;
+
+    // Touch Events natively map to Mouse variables
+    viewport.ontouchstart = (e) => startDrag(e.touches[0].clientX, e.touches[0].clientY);
+    window.ontouchmove = (e) => dragMove(e.touches[0].clientX, e.touches[0].clientY);
+    window.ontouchend = endDrag;
 }
 
 function handleCardClick(clickedCard, title, description, videoFilename) {

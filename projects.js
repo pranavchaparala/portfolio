@@ -37,7 +37,7 @@ const projectsData = [
         "id": "gudz",
         "title": "Gudz",
         "img": "echoesofpresence.png",
-        "link": "gudz/",
+        "link": "projects/gudz/",
         "tags": [],
         "content": "<h1>Gudz</h1><p>Content coming soon.</p>"
     },
@@ -45,7 +45,7 @@ const projectsData = [
         "id": "inka",
         "title": "Inka",
         "img": "lectrix.png",
-        "link": "inka/",
+        "link": "projects/inka/",
         "tags": [],
         "content": "<h1>Inka</h1><p>Content coming soon.</p>"
     },

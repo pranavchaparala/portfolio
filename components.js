@@ -5,14 +5,10 @@ const worksData = typeof projectsData !== 'undefined' ? projectsData : [];
 
 const getBasePath = () => {
     const p = window.location.pathname;
-    const isIndex = p.endsWith('index.html') || p.endsWith('/') || p === '';
-    const isRoot = isIndex && !p.includes('/', 1) && !p.startsWith('/work/') && !p.startsWith('/play/') && !p.startsWith('/about/');
-    
-    // If it's the root index.html, assets are local
-    if (isRoot) return './';
-    
-    // Everything else (moved projects, work, play, etc.) is now 1 level deep
-    return '../';
+    if (p.includes('/projects/')) return '../../';
+    const subpages = ['/work/', '/play/', '/about/', '/contact/', '/research/'];
+    if (subpages.some(page => p.includes(page))) return '../';
+    return './';
 };
 
 const basePath = getBasePath();

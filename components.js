@@ -151,7 +151,7 @@ function setupTransitions() {
             document.body.classList.add('page-leaving');
             setTimeout(() => {
                 window.location.href = targetUrl;
-            }, 600);
+            }, 400); // Optimized from 600ms
         }
     });
 }
@@ -274,6 +274,8 @@ function initWorksTrack() {
                 cards.forEach(c => c.classList.remove('dimmed'));
             });
             const handleProjectClick = (e) => {
+                // Prevent navigation if a significant drag just occurred
+                if (window.isPanning) return;
                 if (document.body.classList.contains('project-opening')) return;
                 
                 const ci = cards.indexOf(card);
@@ -302,7 +304,7 @@ function initWorksTrack() {
                         
                         gsap.to(proxy, {
                             o: targetOffset,
-                            duration: 0.5,
+                            duration: 0.4, // Faster centering
                             ease: 'power2.out',
                             onUpdate: () => { offset = proxy.o; }
                         });
@@ -320,7 +322,7 @@ function initWorksTrack() {
 
                 gsap.to(proxy, {
                     o: targetOffset,
-                    duration: 0.7,
+                    duration: 0.5, // Standardized entry
                     ease: 'power3.out',
                     onUpdate: () => { offset = proxy.o; },
                     onComplete: () => {
@@ -338,7 +340,7 @@ function initWorksTrack() {
                         });
                         // Standalone exit animation (decoupled from intro timeline 'tl')
                         gsap.to({}, {
-                            duration: 1.0,
+                            duration: 0.7, // Optimized: Gentler but faster (was 1.0s)
                             ease: 'power4.inOut',
                             onComplete: () => {
                                 // Native View Transition API (standard for modern browsers)
@@ -442,7 +444,7 @@ function initWorksTrack() {
             blurEnabled = true;
         } else {
             gsap.to(sorted, {
-                opacity: 1, duration: 0.6, stagger: 0.03, ease: 'power2.out',
+                opacity: 1, duration: 0.4, stagger: 0.02, ease: 'power2.out',
                 onComplete() { spinning = true; blurEnabled = true; }
             });
         }
@@ -525,7 +527,42 @@ function initWorksTrack() {
         cb.remove();
     };
 
-    window.addEventListener('wheel', e => { if (spinning && !isVertical) vel += e.deltaY * 0.05; });
+    // WHEEL SENSITIVITY: Adjust the 0.03 to change how fast the mouse wheel scrolls (lower = slower)
+    window.addEventListener('wheel', e => { if (spinning && !isVertical) vel += e.deltaY * 0.03; });
+
+    // --- DESKTOP MOUSE DRAG ENGINE ---
+    let isMouseDown = false;
+    let lastMouseX = 0;
+    window.isPanning = false; // Shared flag to block clicks during/after drag
+    let dragDist = 0;
+
+    window.addEventListener('mousedown', e => {
+        if (!spinning || isVertical) return;
+        isMouseDown = true;
+        lastMouseX = e.clientX;
+        dragDist = 0;
+        window.isPanning = false;
+    });
+
+    window.addEventListener('mousemove', e => {
+        if (!isMouseDown) return;
+        const dx = lastMouseX - e.clientX;
+        dragDist += Math.abs(dx);
+        
+        // DRAG SENSITIVITY: Adjust the 0.12 to change how fast the carousel moves with the mouse (lower = more weight)
+        vel += dx * 0.12;
+        lastMouseX = e.clientX;
+
+        if (dragDist > 10) window.isPanning = true;
+    });
+
+    window.addEventListener('mouseup', () => {
+        isMouseDown = false;
+        // Keep isPanning true very briefly to catch and block the 'click' event
+        setTimeout(() => { window.isPanning = false; }, 50);
+    });
+
+    window.addEventListener('mouseleave', () => { isMouseDown = false; window.isPanning = false; });
 
 
     window.addEventListener('touchmove', e => {
@@ -543,8 +580,8 @@ function initWorksTrack() {
             }
         }
 
-        // Horizontal swiping sensitivity (reduced for more "friction" and control)
-        vel += dx * 0.18;
+        // TOUCH SENSITIVITY: Adjust the 0.12 to change how fast it scrolls on mobile (lower = slower)
+        vel += dx * 0.12;
         
         if (Math.abs(dx) > 2) {
             window.focusedMobileCardIndex = -1;
@@ -590,8 +627,9 @@ function initWorksTrack() {
             return; // completely halt GSAP math processing for vertical
         }
 
-        // DESKTOP INFINITE GSAP LOOP MATH (Increased friction for more control)
-        vel *= 0.91; 
+        // FRICTION: Adjust the 0.88 to change how long the momentum lasts. 
+        // 0.85 is heavy, 0.95 is very slippery.
+        vel *= 0.88; 
         offset -= vel;
         cards.forEach((c, i) => {
             let cp = cardPos[i] + offset;

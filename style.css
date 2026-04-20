@@ -16,6 +16,8 @@ body {
     width: 100%;
     overflow: hidden; /* Strict lock for home page */
     touch-action: pan-x; /* Only allow horizontal panning for the carousel */
+    user-select: none; /* Prevent text selection during drag */
+    -webkit-user-select: none;
 }
 
 body {
@@ -25,6 +27,8 @@ body {
 
 body.scrollable {
     overflow: auto !important;
+    user-select: text !important; /* Allow selection on case studies */
+    -webkit-user-select: text !important;
 }
 
 /* Hide nav and footer during the initial loading sequence */
@@ -78,6 +82,15 @@ body.loading-page footer {
     letter-spacing: 0.05em;
     transition: opacity 0.2s ease;
     white-space: nowrap;
+    /* Optimized hit area */
+    display: inline-block;
+    padding: 12px 16px;
+    margin: -12px -16px; 
+}
+
+/* Ensure Logo doesn't shift left due to negative margin */
+.main-nav a.brand, .main-nav a.active-link {
+    margin-left: 0;
 }
 
 @media (hover: hover) {
@@ -106,8 +119,8 @@ body.loading-page footer {
 }
 
 .page-content {
-    /* Increased from 1.2s to 2.2s for a slower dissolve */
-    animation: contentDissolve 2.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    /* Optimized: Reduced from 2.4s to 1.2s for a snappier arrival */
+    animation: contentDissolve 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     will-change: opacity, transform;
 }
 
@@ -123,7 +136,8 @@ body.loading-page footer {
     width: 100%;
     height: 100%;
     opacity: 0;
-    transition: opacity 0.8s;
+    /* Gentler but faster background shift */
+    transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 #bg-blur img {
@@ -556,29 +570,29 @@ body.page-leaving #gallery-wrap {
         letter-spacing: 0.05em;
         mix-blend-mode: difference;
         touch-action: manipulation;
-        /* Ensure no hover transition on mobile to prevent double-tap issues */
+        /* Expanded hit area for mobile touch */
+        padding: 20px;
     }
 
     .nav-top-left {
-        top: 16px;
-        left: 16px;
+        top: 0px;
+        left: 0px;
     }
 
     .nav-top-right {
-        top: 16px;
-        right: 16px;
+        top: 0px;
+        right: 0px;
     }
 
     .nav-top-center {
-        top: 16px;
-        right: 80px;
-        /* Moved closer to Play on the right */
+        top: 0px;
+        right: 64px; /* Adjusted for padding */
         font-size: 11px !important;
     }
 
     .nav-bottom-left {
-        bottom: 16px;
-        left: 16px;
+        bottom: 0px;
+        left: 0px;
     }
 
     /* Footer Unification */
@@ -912,7 +926,9 @@ body.page-leaving #gallery-wrap {
     padding: 20px; /* Tighter padding for mobile/small screens */
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.6s ease, visibility 0.6s;
+    /* Optimized: Snappier modal toggle */
+    transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
+                visibility 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
 }

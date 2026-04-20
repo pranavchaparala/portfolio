@@ -3,9 +3,10 @@ import re
 import json
 
 # Configuration
-PROJECTS_DIR = 'projects'
+PROJECTS_DIR = '.'
 PROJECTS_JS_FILE = 'projects.js'
-DEFAULT_COVER = 'echoesofpresence.png' # Fallback
+DEFAULT_COVER = 'echoesofpresence.png'
+BLACKLIST = ['.git', 'about', 'work', 'play', 'covers', 'common']
 
 def extract_meta(html_content, name):
     match = re.search(f'<meta name="{name}" content="(.*?)"', html_content)
@@ -21,14 +22,12 @@ def extract_title(html_content):
 def sync():
     projects_data = []
     
-    if not os.path.exists(PROJECTS_DIR):
-        print(f"Error: {PROJECTS_DIR} directory not found.")
-        return
+    # Sort directories by name
+    folders = sorted([f for f in os.listdir(PROJECTS_DIR) 
+                     if os.path.isdir(os.path.join(PROJECTS_DIR, f)) 
+                     and f not in BLACKLIST])
 
-    # Sort directories by name (or potentially by date if we wanted)
-    project_folders = sorted([f for f in os.listdir(PROJECTS_DIR) if os.path.isdir(os.path.join(PROJECTS_DIR, f))])
-
-    for folder in project_folders:
+    for folder in folders:
         index_path = os.path.join(PROJECTS_DIR, folder, 'index.html')
         if not os.path.exists(index_path):
             continue
@@ -37,27 +36,26 @@ def sync():
             content = f.read()
             
         title = extract_title(content)
-        # Look for cover image in meta tag, otherwise check for cover.png/jpg
         img = extract_meta(content, 'project-img')
         tags_raw = extract_meta(content, 'project-tags')
         tags = [t.strip() for t in tags_raw.split(',')] if tags_raw else []
         description = extract_meta(content, 'project-description') or "Content coming soon."
         
+        # Consistent path for project-specific assets if found
         if not img:
             for ext in ['png', 'jpg', 'jpeg', 'webp']:
                 if os.path.exists(os.path.join(PROJECTS_DIR, folder, f'cover.{ext}')):
-                    img = f'../projects/{folder}/cover.{ext}'
+                    img = f'{folder}/cover.{ext}'
                     break
         
-        # If still no image, use the one from projects.js if we can find it, or fallback
         if not img:
-            img = DEFAULT_COVER # We could improve this by parsing current projects.js first
+            img = DEFAULT_COVER
             
         projects_data.append({
             "id": folder,
             "title": title,
             "img": img,
-            "link": f"projects/{folder}/index.html",
+            "link": f"{folder}/",
             "tags": tags,
             "content": f"<h1>{title}</h1><p>{description}</p>"
         })

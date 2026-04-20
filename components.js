@@ -5,10 +5,19 @@ const worksData = typeof projectsData !== 'undefined' ? projectsData : [];
 
 const getBasePath = () => {
     const p = window.location.pathname;
+    // Support legacy projects folder if it exists
     if (p.includes('/projects/')) return '../../';
-    const subpages = ['/work/', '/play/', '/about/', '/contact/', '/research/'];
-    if (subpages.some(page => p.includes(page))) return '../';
-    return './';
+    
+    // Normalize path: ignore 'index.html' and trailing slashes to get true directory depth
+    const segments = p.split('/').filter(s => s && s !== 'index.html');
+    
+    // If no segments (domain root) or in the base subdirectory (like 'portfolioagain')
+    if (segments.length === 0 || (segments.length === 1 && segments[0] === 'portfolioagain')) {
+        return './';
+    }
+    
+    // Everything else (work, play, projects moved to root) is 1 level deep relative to root index.html
+    return '../';
 };
 
 const basePath = getBasePath();
@@ -107,13 +116,13 @@ function injectNavigation() {
 
     const navHTML = `
         <nav class="mobile-spatial-nav mobile-only" style="${spatialOpacityStyle}">
-            <a href="${basePath}index.html" class="nav-top-left ${isIndex ? 'active-link' : ''}">Pranav Chaparala</a>
+            <a href="${basePath}index.html" class="nav-top-left">Pranav Chaparala</a>
             <a href="${basePath}work/index.html" class="nav-top-center ${isWork ? 'active-link' : ''}">Work</a>
             <a href="${basePath}play/index.html" class="nav-top-right ${isPlay ? 'active-link' : ''}">Play</a>
             <a href="javascript:void(0)" onclick="openAboutModal()" class="nav-bottom-left">About</a>
         </nav>
         <nav class="main-nav desktop-only" style="${inlineStyle}">
-            <a href="${basePath}index.html" class="${brandClass}">Pranav Chaparala</a>
+            <a href="${basePath}index.html" class="brand">Pranav Chaparala</a>
             <div class="nav-right-links">
                 <a href="${basePath}work/index.html" class="${isWork ? 'active-link' : ''}">Work</a>
                 <a href="${basePath}play/index.html" class="${isPlay ? 'active-link' : ''}">Play</a>
@@ -151,7 +160,7 @@ function setupTransitions() {
             document.body.classList.add('page-leaving');
             setTimeout(() => {
                 window.location.href = targetUrl;
-            }, 400); // Optimized from 600ms
+            }, 600);
         }
     });
 }
@@ -182,7 +191,10 @@ function initWorksTrack() {
         if (!isVertical) applyPositions();
     });
 
-    const carouselWorks = worksData.slice(0, 6);
+    const selectedIds = ['clanx', 'lectrixev', 'oneplus', 'unreasonablecube', 'doodleforest', 'lunaring'];
+    const carouselWorks = worksData.filter(w => selectedIds.includes(w.id));
+    // Ensure they appear in the order defined in selectedIds
+    carouselWorks.sort((a, b) => selectedIds.indexOf(a.id) - selectedIds.indexOf(b.id));
     const N = carouselWorks.length;
     const GAP = 0;
 
@@ -304,7 +316,7 @@ function initWorksTrack() {
                         
                         gsap.to(proxy, {
                             o: targetOffset,
-                            duration: 0.4, // Faster centering
+                            duration: 0.5,
                             ease: 'power2.out',
                             onUpdate: () => { offset = proxy.o; }
                         });
@@ -322,7 +334,7 @@ function initWorksTrack() {
 
                 gsap.to(proxy, {
                     o: targetOffset,
-                    duration: 0.5, // Standardized entry
+                    duration: 0.7,
                     ease: 'power3.out',
                     onUpdate: () => { offset = proxy.o; },
                     onComplete: () => {
@@ -340,7 +352,7 @@ function initWorksTrack() {
                         });
                         // Standalone exit animation (decoupled from intro timeline 'tl')
                         gsap.to({}, {
-                            duration: 0.7, // Optimized: Gentler but faster (was 1.0s)
+                            duration: 1.0,
                             ease: 'power4.inOut',
                             onComplete: () => {
                                 // Native View Transition API (standard for modern browsers)
@@ -444,7 +456,7 @@ function initWorksTrack() {
             blurEnabled = true;
         } else {
             gsap.to(sorted, {
-                opacity: 1, duration: 0.4, stagger: 0.02, ease: 'power2.out',
+                opacity: 1, duration: 0.6, stagger: 0.03, ease: 'power2.out',
                 onComplete() { spinning = true; blurEnabled = true; }
             });
         }
@@ -580,7 +592,7 @@ function initWorksTrack() {
             }
         }
 
-        // TOUCH SENSITIVITY: Adjust the 0.12 to change how fast it scrolls on mobile (lower = slower)
+        // Horizontal swiping sensitivity (reduced for more "friction" and control)
         vel += dx * 0.12;
         
         if (Math.abs(dx) > 2) {
@@ -679,6 +691,9 @@ function initWorksTrack() {
 }
 
 function initWorksList() {
+    // Suppress the side list on the Work page specifically
+    if (window.location.pathname.includes('/work/')) return;
+    
     const listContainer = document.querySelector('#work-list ul');
     if (!listContainer) return;
     listContainer.innerHTML = '';

@@ -4,7 +4,7 @@ const projectsData = [
         "id": "clanx",
         "title": "ClanX",
         "img": "clanx.png",
-        "link": "projects/clanx/index.html",
+        "link": "projects/clanx/",
         "tags": [
             "Product Design",
             "UX"
@@ -15,7 +15,7 @@ const projectsData = [
         "id": "echoes-of-presence",
         "title": "Echoes of Presence",
         "img": "echoesofpresence.png",
-        "link": "projects/echoes-of-presence/index.html",
+        "link": "projects/echoes-of-presence/",
         "tags": [
             "Installation",
             "Creative Tech"
@@ -26,7 +26,7 @@ const projectsData = [
         "id": "lunaring",
         "title": "Lunaring",
         "img": "lunaring.png",
-        "link": "projects/lunaring/index.html",
+        "link": "projects/lunaring/",
         "tags": [],
         "content": "<h1>Lunaring</h1><p>Content coming soon.</p>"
     },
@@ -34,7 +34,7 @@ const projectsData = [
         "id": "unreasonablecube",
         "title": "Unreasonable Cube",
         "img": "unreasonablecube.png",
-        "link": "projects/unreasonablecube/index.html",
+        "link": "projects/unreasonablecube/",
         "tags": [
             "Installation",
             "Creative Tech"
@@ -45,7 +45,7 @@ const projectsData = [
         "id": "doodleforest",
         "title": "Doodle Forest",
         "img": "doodleforest.png",
-        "link": "projects/doodleforest/index.html",
+        "link": "projects/doodleforest/",
         "tags": [
             "Creative Tech",
             "UX"
@@ -56,7 +56,7 @@ const projectsData = [
         "id": "lectrixEV",
         "title": "Lectrix EV",
         "img": "lectrix.png",
-        "link": "projects/lectrixEV/index.html",
+        "link": "projects/lectrixEV/",
         "tags": [
             "Product Design",
             "Branding"
@@ -67,7 +67,7 @@ const projectsData = [
         "id": "gudz",
         "title": "Gudz",
         "img": "echoesofpresence.png",
-        "link": "projects/gudz/index.html",
+        "link": "projects/gudz/",
         "tags": [],
         "content": "<h1>Gudz</h1><p>Content coming soon.</p>"
     },
@@ -75,7 +75,7 @@ const projectsData = [
         "id": "inka",
         "title": "Inka",
         "img": "lectrix.png",
-        "link": "projects/inka/index.html",
+        "link": "projects/inka/",
         "tags": [],
         "content": "<h1>Inka</h1><p>Content coming soon.</p>"
     },
@@ -83,7 +83,7 @@ const projectsData = [
         "id": "oneplus",
         "title": "Oxygen",
         "img": "lectrix.png",
-        "link": "projects/oneplus/index.html",
+        "link": "projects/oneplus/",
         "tags": [],
         "content": "<h1>Oxygen</h1><p>Content coming soon.</p>"
     },
@@ -91,7 +91,7 @@ const projectsData = [
         "id": "viewbuds",
         "title": "Viewbuds",
         "img": "echoesofpresence.png",
-        "link": "projects/viewbuds/index.html",
+        "link": "projects/viewbuds/",
         "tags": [],
         "content": "<h1>Viewbuds</h1><p>Content coming soon.</p>"
     }

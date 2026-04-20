@@ -4,7 +4,7 @@ const projectsData = [
         "id": "clanx",
         "title": "ClanX",
         "img": "clanx.png",
-        "link": "clanx/",
+        "link": "projects/clanx/",
         "tags": [
             "Product Design",
             "UX"
@@ -12,10 +12,40 @@ const projectsData = [
         "content": "<h1>ClanX</h1><p>An AI-powered recruitment platform simplifying the path from talent discovery to hire.</p>"
     },
     {
+        "id": "echoes-of-presence",
+        "title": "Echoes of Presence",
+        "img": "echoesofpresence.png",
+        "link": "projects/echoes-of-presence/",
+        "tags": [
+            "Installation",
+            "Creative Tech"
+        ],
+        "content": "<h1>Echoes of Presence</h1><p>An evolving generative art installation reconciling our relationship to AI worlds.</p>"
+    },
+    {
+        "id": "lunaring",
+        "title": "Lunaring",
+        "img": "lunaring.png",
+        "link": "projects/lunaring/",
+        "tags": [],
+        "content": "<h1>Lunaring</h1><p>Content coming soon.</p>"
+    },
+    {
+        "id": "unreasonablecube",
+        "title": "Unreasonable Cube",
+        "img": "unreasonablecube.png",
+        "link": "projects/unreasonablecube/",
+        "tags": [
+            "Installation",
+            "Creative Tech"
+        ],
+        "content": "<h1>Unreasonable Cube</h1><p>A physical AI that maps challenges to multidimensional perspectives through tangible interaction.</p>"
+    },
+    {
         "id": "doodleforest",
         "title": "Doodle Forest",
         "img": "doodleforest.png",
-        "link": "doodleforest/",
+        "link": "projects/doodleforest/",
         "tags": [
             "Creative Tech",
             "UX"
@@ -23,15 +53,15 @@ const projectsData = [
         "content": "<h1>Doodle Forest</h1><p>Plant flora and spawn fauna in a generative 10x10 grid using the Google Quick Draw dataset.</p>"
     },
     {
-        "id": "echoes-of-presence",
-        "title": "Echoes of Presence",
-        "img": "echoesofpresence.png",
-        "link": "echoes-of-presence/",
+        "id": "lectrixEV",
+        "title": "Lectrix EV",
+        "img": "lectrix.png",
+        "link": "projects/lectrixEV/",
         "tags": [
-            "Installation",
-            "Creative Tech"
+            "Product Design",
+            "Branding"
         ],
-        "content": "<h1>Echoes of Presence</h1><p>An evolving generative art installation reconciling our relationship to AI worlds.</p>"
+        "content": "<h1>Lectrix EV</h1><p>Reimaging the Lectrix app for a smarter EV scooter experience.</p>"
     },
     {
         "id": "gudz",
@@ -50,54 +80,18 @@ const projectsData = [
         "content": "<h1>Inka</h1><p>Content coming soon.</p>"
     },
     {
-        "id": "lectrixEV",
-        "title": "Lectrix EV",
-        "img": "lectrix.png",
-        "link": "lectrixEV/",
-        "tags": [
-            "Product Design",
-            "Branding"
-        ],
-        "content": "<h1>Lectrix EV</h1><p>Reimaging the Lectrix app for a smarter EV scooter experience.</p>"
-    },
-    {
-        "id": "lunaring",
-        "title": "Luna Ring",
-        "img": "lunaring.png",
-        "link": "lunaring/",
-        "tags": [
-            "UI/UX Design",
-            "Health Tech"
-        ],
-        "content": "<h1>Luna Ring</h1><p>contribution to the development of Luna Ring, a health tracking device merging style with functionality.</p>"
-    },
-    {
         "id": "oneplus",
-        "title": "OnePlus OxygenOS 12",
-        "img": "oneplus.png",
-        "link": "oneplus/",
-        "tags": [
-            "Product Design",
-            "UI/UX"
-        ],
-        "content": "<h1>OnePlus OxygenOS 12</h1><p>Enhancing the Work-Life Balance feature and system services in OxygenOS 12 at OnePlus.</p>"
-    },
-    {
-        "id": "unreasonablecube",
-        "title": "Unreasonable Cube",
-        "img": "unreasonablecube.png",
-        "link": "unreasonablecube/",
-        "tags": [
-            "Installation",
-            "Creative Tech"
-        ],
-        "content": "<h1>Unreasonable Cube</h1><p>A physical AI that maps challenges to multidimensional perspectives through tangible interaction.</p>"
+        "title": "Oxygen",
+        "img": "lectrix.png",
+        "link": "projects/oneplus/",
+        "tags": [],
+        "content": "<h1>Oxygen</h1><p>Content coming soon.</p>"
     },
     {
         "id": "viewbuds",
         "title": "Viewbuds",
         "img": "echoesofpresence.png",
-        "link": "viewbuds/",
+        "link": "projects/viewbuds/",
         "tags": [],
         "content": "<h1>Viewbuds</h1><p>Content coming soon.</p>"
     }

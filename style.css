@@ -72,7 +72,7 @@ body.loading-page footer {
 .main-nav a {
     text-decoration: none;
     color: #fff;
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -89,6 +89,28 @@ body.loading-page footer {
 .active-link {
     text-decoration: underline !important;
     text-underline-offset: 4px;
+}
+
+/* Mute toggle button: styled to match nav links */
+.mute-toggle-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    font-family: inherit;
+    transition: opacity 0.2s ease;
+    white-space: nowrap;
+}
+
+@media (hover: hover) {
+    .mute-toggle-btn:hover {
+        opacity: 0.4;
+    }
 }
 
 /* --- 3. GLOBAL DISSOLVE ANIMATION (SLOWED DOWN) --- */
@@ -266,7 +288,7 @@ footer {
 
 
 .footer-left {
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 600;
     letter-spacing: 0.05em;
     line-height: 1.4;
@@ -276,7 +298,7 @@ footer {
 }
 
 .footer-right {
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 600;
     letter-spacing: 0.05em;
     line-height: 1.4;
@@ -286,7 +308,7 @@ footer {
 
 
 #clock {
-    font-size: 11px;
+    font-size: 12px;
     font-variant-numeric: tabular-nums;
     font-weight: 600;
 }
@@ -344,7 +366,7 @@ body.page-loaded #active-project-title {
 }
 
 #work-list li a {
-    font-size: 13px;
+    font-size: 12px;
     /* Slightly larger */
     font-weight: 600;
     text-transform: uppercase;
@@ -355,6 +377,7 @@ body.page-loaded #active-project-title {
     color: #000;
     display: block;
     margin-bottom: 8px;
+    margin-left: 4px;
     /* More spacing between items */
 }
 
@@ -391,8 +414,8 @@ body.page-loaded #active-project-title {
 }
 
 #cursor-square-loader {
-    width: 14px;
-    height: 14px;
+    width: 12px;
+    height: 12px;
     position: fixed;
     pointer-events: none;
     z-index: 200001; /* Higher than the SVG path */
@@ -421,16 +444,6 @@ body.loaded .loader-rect {
     background-color: black;
 }
 
-body.hovering-project .loader-rect {
-    width: 105px;
-    /* Shrunk from 130px */
-    height: 28px;
-    /* Shrunk from 36px */
-    border-radius: 0px;
-    background-color: #000;
-    border-color: #000;
-}
-
 #open-project-label {
     position: absolute;
     top: 50%;
@@ -452,10 +465,37 @@ body.hovering-project .loader-rect {
     text-transform: capitalize;
 }
 
-/* Fades the text in AFTER the box expands */
-body.hovering-project #open-project-label {
+/* --- CURSOR HINT (scroll/drag to explore) --- */
+@keyframes cursorHintBreathe {
+    0%   { opacity: 0; }
+    25%  { opacity: 1; }
+    75%  { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+#cursor-hint {
+    position: fixed;
+    pointer-events: none;
+    z-index: 300000;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
     color: #fff;
-    transition: color 0.3s ease-in-out 0.15s;
+    mix-blend-mode: difference;
+    white-space: nowrap;
+    opacity: 0;
+    left: -9999px;
+    top: -9999px;
+    transform: translateY(-50%);
+}
+
+#cursor-hint.visible {
+    animation: cursorHintBreathe 2s ease-in-out infinite;
+}
+
+@media (hover: none) and (pointer: coarse) {
+    #cursor-hint { display: none !important; }
 }
 
 /* --- 7. PAGE TRANSITIONS --- */
@@ -579,6 +619,21 @@ body.page-leaving #gallery-wrap {
     .nav-bottom-left {
         bottom: 20px;
         left: 20px;
+    }
+
+    .nav-bottom-right {
+        bottom: 20px;
+        right: 20px;
+    }
+
+    /* Mobile mute button adopts spatial nav positioning */
+    .mobile-spatial-nav .mute-toggle-btn {
+        position: fixed;
+        z-index: 10001;
+        mix-blend-mode: difference;
+        touch-action: manipulation;
+        bottom: 20px;
+        right: 20px;
     }
 
     /* Footer Unification */
@@ -784,7 +839,7 @@ body.page-leaving #gallery-wrap {
 .filter-btn {
     background: none;
     border: none;
-    padding: 14px 6px;
+    padding: 12px 6px;
     /* Increased vertical padding for touch */
     margin-right: 18px;
     font-size: 11px;
@@ -880,7 +935,7 @@ body.page-leaving #gallery-wrap {
 }
 
 .grid-title {
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.1em;
@@ -937,7 +992,7 @@ body.page-leaving #gallery-wrap {
 }
 
 .about-content h2 {
-    font-size: 14px; /* Smaller labels */
+    font-size: 12px; /* Smaller labels */
     font-weight: 600;
     text-transform: uppercase;
     margin: 30px 0 12px; /* Tighter */
@@ -991,7 +1046,7 @@ body.page-leaving #gallery-wrap {
         margin-bottom: 8px;
     }
     .about-content p {
-        font-size: 14px; /* Tighter text */
+        font-size: 12px; /* Tighter text */
         line-height: 1.4;
         margin-bottom: 8px;
     }
@@ -1052,7 +1107,7 @@ body.page-leaving #gallery-wrap {
 }
 
 .about-content .meta-label {
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;

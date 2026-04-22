@@ -5,6 +5,10 @@
 // --- Global State ---
 let grid, gridWrapper, infoOverlay, mainHeader, viewport;
 
+window.syncPlaygroundMute = function() {
+    if (typeof window.updateMuteUI === 'function') window.updateMuteUI();
+};
+
 const totalCards = 104; 
 let isDragging = false;
 let isFocused = false;
@@ -238,20 +242,26 @@ function executeZoom({ clickedCard, title, description, videoFilename }) {
     infoOverlay.classList.add('info-visible');
     document.getElementById('focus-title').innerText = title;
     document.getElementById('focus-subtitle').innerText = description;
+    window.syncPlaygroundMute();
 
     if (mainHeader) mainHeader.style.opacity = '0.05'; // Faint but accessible
 
     if (videoFilename) {
         const vid = document.createElement('video');
         vid.src = `playgroundassets/${videoFilename}`;
-        vid.autoplay = true; vid.muted = false; vid.loop = true; vid.playsInline = true;
+        vid.autoplay = true; vid.muted = window.isMuted; vid.loop = true; vid.playsInline = true;
         vid.className = 'card-video';
         vid.style.position = 'absolute'; vid.style.top = '0'; vid.style.left = '0';
         vid.style.width = '100%'; vid.style.height = '100%'; vid.style.objectFit = 'cover';
         vid.style.opacity = '0'; vid.style.transition = 'opacity 0.5s ease 0.5s'; vid.style.pointerEvents = 'none';
 
         clickedCard.appendChild(vid);
-        vid.play().catch(() => { vid.muted = true; vid.play(); });
+        vid.play().catch(() => {
+            if (!vid.muted) {
+                vid.muted = true;
+                vid.play();
+            }
+        });
         setTimeout(() => { vid.style.opacity = '1'; }, 100);
     }
 }

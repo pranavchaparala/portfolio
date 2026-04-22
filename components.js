@@ -22,6 +22,35 @@ const getBasePath = () => {
 
 const basePath = getBasePath();
 
+// --- GLOBAL AUDIO STATE ---
+// Default: muted (siteMuted is null on first visit, so !== 'false' → true)
+window.isMuted = localStorage.getItem('siteMuted') !== 'false';
+
+window.updateMuteUI = function() {
+    document.querySelectorAll('.mute-toggle-btn').forEach(btn => {
+        btn.textContent = window.isMuted ? '[ UNMUTE ]' : '[ MUTE ]';
+    });
+    // Also update play page overlay if present
+    const overlayStatus = document.getElementById('focus-mute-status');
+    if (overlayStatus) {
+        overlayStatus.textContent = window.isMuted ? '[ UNMUTE ]' : '';
+    }
+    // Sync any playing videos
+    document.querySelectorAll('.card-video').forEach(v => { v.muted = window.isMuted; });
+};
+
+window.toggleMute = function(e) {
+    if (e) { e.preventDefault(); e.stopPropagation(); }
+    window.isMuted = !window.isMuted;
+    localStorage.setItem('siteMuted', String(window.isMuted));
+    window.updateMuteUI();
+    if (!window.isMuted) {
+        // Unlock audio context on unmute
+        const s = new Audio();
+        s.play().catch(() => {});
+    }
+};
+
 // Global touch tracking for mobile interaction optimizations
 let touchStartX = 0;
 let touchStartY = 0;
@@ -120,13 +149,15 @@ function injectNavigation() {
             <a href="${basePath}work/index.html" class="nav-top-center ${isWork ? 'active-link' : ''}">Work</a>
             <a href="${basePath}play/index.html" class="nav-top-right ${isPlay ? 'active-link' : ''}">Play</a>
             <a href="javascript:void(0)" onclick="openAboutModal()" class="nav-bottom-left">About</a>
+            <button onclick="window.toggleMute(event)" class="nav-bottom-right mute-toggle-btn">${window.isMuted ? '[ UNMUTE ]' : '[ MUTE ]'}</button>
         </nav>
         <nav class="main-nav desktop-only" style="${inlineStyle}">
             <a href="${basePath}index.html" class="brand">Pranav Chaparala</a>
             <div class="nav-right-links">
+                <button onclick="window.toggleMute(event)" class="mute-toggle-btn">${window.isMuted ? '[ UNMUTE ]' : '[ MUTE ]'}</button>
                 <a href="${basePath}work/index.html" class="${isWork ? 'active-link' : ''}">Work</a>
                 <a href="${basePath}play/index.html" class="${isPlay ? 'active-link' : ''}">Play</a>
-                <a href="javascript:void(0)" onclick="openAboutModal()">About</a>        
+                <a href="javascript:void(0)" onclick="openAboutModal()">About</a>
             </div>
         </nav>
     `;
@@ -278,8 +309,10 @@ function initWorksTrack() {
                 if (!blurEnabled || document.body.classList.contains('project-opening')) return;
 
                 // Play hover sound
-                hoverSound.currentTime = 0;
-                hoverSound.play().catch(() => { /* Blocked until first interaction */ });
+                if (!window.isMuted) {
+                    hoverSound.currentTime = 0;
+                    hoverSound.play().catch(() => { /* Blocked until first interaction */ });
+                }
 
                 // Update project title for desktop
                 if (!isMobile) {
@@ -348,49 +381,25 @@ function initWorksTrack() {
                 }
                 // -----------------------------
 
+                // Skip centering — navigate directly on click
                 vel = 0;
-                const targetOffset = VW / 2 - (cardPos[ci] + size / 2);
-                let proxy = { o: offset };
+                document.body.classList.add('project-opening');
+                card.classList.add('clicked-active');
+                card.style.setProperty('opacity', '1', 'important');
+                const clickedPan = card.querySelector('.pan');
+                if (clickedPan) clickedPan.style.setProperty('opacity', '1', 'important');
+                cards.forEach(c => { if (c !== card) c.classList.add('dimmed'); });
 
-                gsap.to(proxy, {
-                    o: targetOffset,
-                    duration: 0.7,
-                    ease: 'power3.out',
-                    onUpdate: () => { offset = proxy.o; },
-                    onComplete: () => {
-                        document.body.classList.add('project-opening');
-                        cards.forEach(c => {
-                            if (c !== card) {
-                                c.classList.add('dimmed');
-                            } else {
-                                c.classList.remove('dimmed');
-                                c.classList.add('clicked-active');
-                                c.style.setProperty('opacity', '1', 'important');
-                                const pan = c.querySelector('.pan');
-                                if (pan) pan.style.setProperty('opacity', '1', 'important');
-                            }
+                setTimeout(() => {
+                    if (document.startViewTransition) {
+                        card.style.viewTransitionName = 'active-project-card';
+                        document.startViewTransition(() => {
+                            window.location.href = basePath + work.link;
                         });
-                        // Standalone exit animation (decoupled from intro timeline 'tl')
-                        gsap.to({}, {
-                            duration: 1.0,
-                            ease: 'power4.inOut',
-                            onComplete: () => {
-                                // Native View Transition API (standard for modern browsers)
-                                if (document.startViewTransition) {
-                                    // Assign a transition name to the specific card for the shared element effect
-                                    card.style.viewTransitionName = 'active-project-card';
-                                    
-                                    document.startViewTransition(() => {
-                                        window.location.href = basePath + work.link;
-                                    });
-                                } else {
-                                    // Fallback for older browsers
-                                    window.location.href = basePath + work.link;
-                                }
-                            }
-                        });
+                    } else {
+                        window.location.href = basePath + work.link;
                     }
-                });
+                }, 350);
             };
 
             card.addEventListener('click', (e) => handleProjectClick(e));

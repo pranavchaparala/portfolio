@@ -79,17 +79,28 @@ const projectsData = [
     },
     {
         "id": "viewbuds",
-        "title": "Viewbuds",
+        "title": "Noise View Buds",
         "img": "echoesofpresence.png",
         "link": "viewbuds/",
+        "tags": [
+            "Product Design",
+            "UI/UX"
+        ],
+        "content": "<h1>Noise View Buds</h1><p>Integrating a screen into smart earbuds to create a seamless, easy-to-navigate operating system.</p>"
+    },
+    {
+        "id": "bezapp",
+        "title": "Bezapp",
+        "img": "echoesofpresence.png",
+        "link": "https://www.behance.net/gallery/116765115/Events-Management-App-UIUX-Design",
         "tags": [],
-        "content": "<h1>Viewbuds</h1><p>Content coming soon.</p>"
+        "content": "<h1>Bezapp</h1><p>Content coming soon.</p>"
     },
     {
         "id": "gudz",
         "title": "Gudz",
         "img": "echoesofpresence.png",
-        "link": "gudz/",
+        "link": "https://www.behance.net/gallery/186363817/Logistics-CMS-Delivery-App",
         "tags": [],
         "content": "<h1>Gudz</h1><p>Content coming soon.</p>"
     },

@@ -80,7 +80,7 @@ const projectsData = [
     {
         "id": "viewbuds",
         "title": "Noise View Buds",
-        "img": "echoesofpresence.png",
+        "img": "viewbuds.png",
         "link": "viewbuds/",
         "tags": [
             "Product Design",
@@ -91,7 +91,7 @@ const projectsData = [
     {
         "id": "bezapp",
         "title": "Bezapp",
-        "img": "echoesofpresence.png",
+        "img": "bezapp.png",
         "link": "https://www.behance.net/gallery/116765115/Events-Management-App-UIUX-Design",
         "tags": [],
         "content": "<h1>Bezapp</h1><p>Content coming soon.</p>"
@@ -99,17 +99,10 @@ const projectsData = [
     {
         "id": "gudz",
         "title": "Gudz",
-        "img": "echoesofpresence.png",
+        "img": "gudz.png",
         "link": "https://www.behance.net/gallery/186363817/Logistics-CMS-Delivery-App",
         "tags": [],
         "content": "<h1>Gudz</h1><p>Content coming soon.</p>"
     },
-    {
-        "id": "inka",
-        "title": "Inka",
-        "img": "lectrix.png",
-        "link": "inka/",
-        "tags": [],
-        "content": "<h1>Inka</h1><p>Content coming soon.</p>"
-    }
+
 ];

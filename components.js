@@ -140,10 +140,21 @@ function setupTransitions() {
 
     window.addEventListener('load', () => {
         document.body.classList.add('page-loaded');
+        document.body.classList.remove('page-leaving');
     });
 
-    if (document.readyState === 'complete') {
+    window.addEventListener('pageshow', (event) => {
+        // If the page is being restored from the bfcache (Back-Forward Cache)
+        if (event.persisted) {
+            document.body.classList.add('page-loaded');
+            document.body.classList.remove('page-leaving');
+            document.body.classList.remove('project-opening');
+        }
+    });
+
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
         document.body.classList.add('page-loaded');
+        document.body.classList.remove('page-leaving');
     }
 
     document.addEventListener('click', (e) => {
@@ -191,7 +202,16 @@ function initWorksTrack() {
         if (!isVertical) applyPositions();
     });
 
-    const selectedIds = ['clanx', 'lectrixev', 'oneplus', 'unreasonablecube', 'doodleforest', 'lunaring'];
+    const selectedIds = [
+        'echoes-of-presence',
+        'clanx',
+        'lectrixev',
+        'unreasonablecube',
+        'lunaring',
+        'oneplus',
+        'doodleforest',
+        'viewbuds'
+    ];
     const carouselWorks = worksData.filter(w => selectedIds.includes(w.id));
     // Ensure they appear in the order defined in selectedIds
     carouselWorks.sort((a, b) => selectedIds.indexOf(a.id) - selectedIds.indexOf(b.id));

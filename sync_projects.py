@@ -22,10 +22,30 @@ def extract_title(html_content):
 def sync():
     projects_data = []
     
-    # Sort directories by name
-    folders = sorted([f for f in os.listdir(PROJECTS_DIR) 
-                     if os.path.isdir(os.path.join(PROJECTS_DIR, f)) 
-                     and f not in BLACKLIST])
+    # Define manual priority order
+    PRIORITY = [
+        'echoes-of-presence',
+        'clanx',
+        'lectrixev',
+        'unreasonablecube',
+        'lunaring',
+        'oneplus',
+        'doodleforest',
+        'viewbuds'
+    ]
+    
+    # Sort folders: priority folders first in order, then others alphabetically
+    folders = [f for f in os.listdir(PROJECTS_DIR) 
+               if os.path.isdir(os.path.join(PROJECTS_DIR, f)) 
+               and f not in BLACKLIST]
+    
+    def sort_key(folder):
+        if folder in PRIORITY:
+            return (0, PRIORITY.index(folder))
+        else:
+            return (1, folder.lower())
+            
+    folders.sort(key=sort_key)
 
     for folder in folders:
         index_path = os.path.join(PROJECTS_DIR, folder, 'index.html')

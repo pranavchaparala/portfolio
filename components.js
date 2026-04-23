@@ -351,7 +351,8 @@ function initWorksTrack() {
                     document.body.classList.remove('page-loaded');
                     document.body.classList.add('page-leaving');
                     setTimeout(() => {
-                        window.location.href = basePath + work.link;
+                        const target = work.link.startsWith('http') ? work.link : basePath + work.link;
+                        window.location.href = target;
                     }, 400);
                     return;
                 }
@@ -391,13 +392,14 @@ function initWorksTrack() {
                 cards.forEach(c => { if (c !== card) c.classList.add('dimmed'); });
 
                 setTimeout(() => {
+                    const target = work.link.startsWith('http') ? work.link : basePath + work.link;
                     if (document.startViewTransition) {
                         card.style.viewTransitionName = 'active-project-card';
                         document.startViewTransition(() => {
-                            window.location.href = basePath + work.link;
+                            window.location.href = target;
                         });
                     } else {
-                        window.location.href = basePath + work.link;
+                        window.location.href = target;
                     }
                 }, 350);
             };
@@ -734,7 +736,8 @@ function initWorksList() {
         const li = document.createElement('li');
         li.setAttribute('data-img', work.img);
         const a = document.createElement('a');
-        a.href = basePath + work.link;
+        a.href = work.link.startsWith('http') ? work.link : basePath + work.link;
+        if (work.link.startsWith('http')) a.target = '_blank';
         
         // Add image for mobile (hidden on desktop via css)
         const coverImg = document.createElement('img');

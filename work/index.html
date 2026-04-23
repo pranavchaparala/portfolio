@@ -121,7 +121,9 @@
             projectsData.forEach(project => {
                 const item = document.createElement('a');
                 item.className = 'grid-item';
-                item.href = '../' + project.link;
+                const isExternal = project.link.startsWith('http');
+                item.href = isExternal ? project.link : '../' + project.link;
+                if (isExternal) item.target = '_blank';
                 item.dataset.tags = (project.tags || []).join(',');
                 
                 const tagsHTML = (project.tags || []).map(t => 

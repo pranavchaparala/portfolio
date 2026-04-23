@@ -24,14 +24,12 @@ def sync():
     
     # Define manual priority order
     PRIORITY = [
-        'clanx',
-        'echoes-of-presence',
-        'lunaring',
-        'lectrixev',
+        'viewbuds',
         'unreasonablecube',
-        'doodleforest',
-        'oneplus',
-        'viewbuds'
+        'lectrixev',
+        'lunaring',
+        'echoes-of-presence',
+        'clanx'
     ]
     
     # Sort folders: priority folders first in order, then others alphabetically

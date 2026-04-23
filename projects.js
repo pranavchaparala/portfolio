@@ -37,7 +37,7 @@ const projectsData = [
         "id": "lectrixev",
         "title": "Lectrix EV",
         "img": "lectrix.png",
-        "link": "lectrixev/index.html",
+        "link": "lectrixev/",
         "tags": [
             "Product Design",
             "Branding"

@@ -5,19 +5,21 @@ const worksData = typeof projectsData !== 'undefined' ? projectsData : [];
 
 const getBasePath = () => {
     const p = window.location.pathname;
+
+    // Explicit depth checks based on known subfolders
+    if (p.includes('/work/') || p.includes('/play/') || p.includes('/lectrixev/') ||
+        p.includes('/clanx/') || p.includes('/oneplus/') || p.includes('/lunaring/') ||
+        p.includes('/doodleforest/') || p.includes('/echoes-of-presence/') ||
+        p.includes('/unreasonablecube/') || p.includes('/viewbuds/') ||
+        p.includes('/gudz/') || p.includes('/bezapp/') || p.includes('/inka/')) {
+        return '../';
+    }
+
     // Support legacy projects folder if it exists
     if (p.includes('/projects/')) return '../../';
-    
-    // Normalize path: ignore 'index.html' and trailing slashes to get true directory depth
-    const segments = p.split('/').filter(s => s && s !== 'index.html');
-    
-    // If no segments (domain root) or in the base subdirectory (like 'portfolioagain')
-    if (segments.length === 0 || (segments.length === 1 && segments[0] === 'portfolioagain')) {
-        return './';
-    }
-    
-    // Everything else (work, play, projects moved to root) is 1 level deep relative to root index.html
-    return '../';
+
+    // Default to root
+    return './';
 };
 
 const basePath = getBasePath();
@@ -26,7 +28,7 @@ const basePath = getBasePath();
 // Default: muted (siteMuted is null on first visit, so !== 'false' → true)
 window.isMuted = localStorage.getItem('siteMuted') !== 'false';
 
-window.updateMuteUI = function() {
+window.updateMuteUI = function () {
     document.querySelectorAll('.mute-toggle-btn').forEach(btn => {
         btn.textContent = window.isMuted ? '[ UNMUTE ]' : '[ MUTE ]';
     });
@@ -39,7 +41,7 @@ window.updateMuteUI = function() {
     document.querySelectorAll('.card-video').forEach(v => { v.muted = window.isMuted; });
 };
 
-window.toggleMute = function(e) {
+window.toggleMute = function (e) {
     if (e) { e.preventDefault(); e.stopPropagation(); }
     window.isMuted = !window.isMuted;
     localStorage.setItem('siteMuted', String(window.isMuted));
@@ -47,7 +49,7 @@ window.toggleMute = function(e) {
     if (!window.isMuted) {
         // Unlock audio context on unmute
         const s = new Audio();
-        s.play().catch(() => {});
+        s.play().catch(() => { });
     }
 };
 
@@ -113,14 +115,14 @@ function injectAboutModal() {
     document.body.insertAdjacentHTML('beforeend', modalHTML);
 }
 
-window.openAboutModal = function() {
+window.openAboutModal = function () {
     injectAboutModal();
     setTimeout(() => {
         document.querySelector('.about-modal').classList.add('active');
     }, 10);
 };
 
-window.closeAboutModal = function() {
+window.closeAboutModal = function () {
     const modal = document.querySelector('.about-modal');
     if (modal) {
         modal.classList.remove('active');
@@ -139,7 +141,7 @@ function injectNavigation() {
 
     const brandClass = isIndex ? 'active-link' : 'brand';
     const inlineStyle = isIndex ? 'opacity: 0;' : '';
-    
+
     // Immediately display spatial navigation on non-index pages
     const spatialOpacityStyle = !isIndex ? 'opacity: 1 !important;' : 'opacity: 0;';
 
@@ -210,7 +212,7 @@ function setupTransitions() {
 function initWorksTrack() {
     const stage = document.getElementById('stage');
     if (!stage) return;
-    
+
     // Physics bouncing executes natively now on iOS.
 
     // Initialize hover sound
@@ -234,13 +236,13 @@ function initWorksTrack() {
     });
 
     const selectedIds = [
-        'echoes-of-presence',
         'clanx',
+        'echoes-of-presence',
+        'lunaring',
         'lectrixev',
         'unreasonablecube',
-        'lunaring',
-        'oneplus',
         'doodleforest',
+        'oneplus',
         'viewbuds'
     ];
     const carouselWorks = worksData.filter(w => selectedIds.includes(w.id));
@@ -293,7 +295,7 @@ function initWorksTrack() {
             card.className = `card ${sh(i)}`;
             card.style.width = w(i) + 'px';
             card.style.height = h(i) + 'px';
-            
+
             if (isVertical) {
                 card.style.position = 'relative';
                 card.style.left = 'auto';
@@ -330,7 +332,7 @@ function initWorksTrack() {
             card.addEventListener('mouseleave', () => {
                 if (isMobile) return; // Prevent Safari ghost tap
                 if (!blurEnabled || document.body.classList.contains('project-opening')) return;
-                
+
                 if (!isMobile) {
                     gsap.to(titleEl, { opacity: 0, duration: 0.15 });
                 }
@@ -342,10 +344,10 @@ function initWorksTrack() {
                 // Prevent navigation if a significant drag just occurred
                 if (window.isPanning) return;
                 if (document.body.classList.contains('project-opening')) return;
-                
+
                 const ci = cards.indexOf(card);
                 const size = w(ci % N);
-                
+
                 if (isVertical) {
                     document.body.classList.add('project-opening');
                     document.body.classList.remove('page-loaded');
@@ -367,14 +369,14 @@ function initWorksTrack() {
                         vel = 0;
                         const targetOffset = VW / 2 - (cardPos[ci] + size / 2);
                         let proxy = { o: offset };
-                        
+
                         gsap.to(proxy, {
                             o: targetOffset,
                             duration: 0.5,
                             ease: 'power2.out',
                             onUpdate: () => { offset = proxy.o; }
                         });
-                        
+
                         titleEl.innerHTML = `<div class="project-subheading">Selected Work</div>${work.title}`;
                         gsap.to(titleEl, { opacity: 1, duration: 0.3 });
                         return; // Block navigation on first tap
@@ -405,7 +407,7 @@ function initWorksTrack() {
             };
 
             card.addEventListener('click', (e) => handleProjectClick(e));
-            
+
             // Fast-tap for mobile to bypass click delay
             card.addEventListener('touchend', (e) => {
                 if (!isMobile) return;
@@ -503,7 +505,7 @@ function initWorksTrack() {
             mobileNav.style.pointerEvents = 'auto';
         }
         if (titleEl && !isMobile) gsap.to(titleEl, { opacity: 1, duration: instant ? 0 : 0.8 });
-        
+
         const footer = document.querySelector('footer');
         if (footer) gsap.to(footer, { opacity: 1, duration: instant ? 0 : 0.8, onComplete: () => footer.style.pointerEvents = 'auto' });
 
@@ -540,14 +542,14 @@ function initWorksTrack() {
         fakes.forEach((f, i) => {
             const t = i * STEP;
             tl.to(f, { scale: 1.02, duration: IN, ease: 'power3.out' }, t)
-              .to(f, { scale: 1.0, duration: OUT, ease: 'power2.inOut' }, t + IN + HOLD);
+                .to(f, { scale: 1.0, duration: OUT, ease: 'power2.inOut' }, t + IN + HOLD);
         });
 
         const seqEnd = (N - 1) * STEP + IN + HOLD + OUT;
         tl.to(fakes.slice(0, -1), {
             opacity: 0, duration: 0.4, stagger: { each: 0.04, from: 'start' }, ease: 'power2.in'
         }, seqEnd + 0.3)
-        .to(fakes[N - 1], { opacity: 0, duration: 0.5, ease: 'power2.in' });
+            .to(fakes[N - 1], { opacity: 0, duration: 0.5, ease: 'power2.in' });
     } else {
         revealCarousel(true);
     }
@@ -591,7 +593,7 @@ function initWorksTrack() {
         if (!isMouseDown) return;
         const dx = lastMouseX - e.clientX;
         dragDist += Math.abs(dx);
-        
+
         // DRAG SENSITIVITY: Adjust the 0.12 to change how fast the carousel moves with the mouse (lower = more weight)
         vel += dx * 0.12;
         lastMouseX = e.clientX;
@@ -614,7 +616,7 @@ function initWorksTrack() {
         const currentY = e.touches[0].clientY;
         const dx = touchStartX - currentX;
         const dy = touchStartY - currentY;
-        
+
         // Prevent default vertical scrolling on the home page
         // Only prevent if movement is significant to avoid swallowing tiny taps
         if (!document.body.classList.contains('scrollable')) {
@@ -625,7 +627,7 @@ function initWorksTrack() {
 
         // Horizontal swiping sensitivity (reduced for more "friction" and control)
         vel += dx * 0.12;
-        
+
         if (Math.abs(dx) > 2) {
             window.focusedMobileCardIndex = -1;
             if (isMobile && titleEl) gsap.to(titleEl, { opacity: 0, duration: 0.2 });
@@ -633,13 +635,13 @@ function initWorksTrack() {
 
         touchStartX = currentX;
         touchStartY = currentY;
-    }, {passive: false});
+    }, { passive: false });
 
     const BUFFER = 600;
     (function loop() {
         requestAnimationFrame(loop);
         if (!spinning) return;
-        
+
         if (isVertical) {
             // NATIVE MOBILE Parallax & Hover calculations ONLY
             let closestCard = null;
@@ -649,9 +651,9 @@ function initWorksTrack() {
                 const mid = rect.top + rect.height / 2;
                 const viewSize = VH;
                 const diff = Math.abs(mid - viewSize / 2);
-                if (diff < minDiff) { 
-                    minDiff = diff; 
-                    closestCard = c; 
+                if (diff < minDiff) {
+                    minDiff = diff;
+                    closestCard = c;
                 }
                 const pan = c.querySelector('.pan');
                 if (pan) pan.style.transform = `translateY(${(mid - viewSize / 2) * 0.01}px)`;
@@ -672,7 +674,7 @@ function initWorksTrack() {
 
         // FRICTION: Adjust the 0.88 to change how long the momentum lasts. 
         // 0.85 is heavy, 0.95 is very slippery.
-        vel *= 0.88; 
+        vel *= 0.88;
         offset -= vel;
         cards.forEach((c, i) => {
             let cp = cardPos[i] + offset;
@@ -680,7 +682,7 @@ function initWorksTrack() {
             if (cp + size < -BUFFER) cardPos[i] += totalPos + GAP;
             if (cp > VW + BUFFER) cardPos[i] -= totalPos + GAP;
         });
-        
+
         let minDiff = Infinity;
         let currentCenterIdx = -1;
 
@@ -694,7 +696,7 @@ function initWorksTrack() {
             c.style.transform = 'translateY(0)';
             const pan = c.querySelector('.pan');
             if (pan) pan.style.transform = `translateX(${(mid - viewSize / 2) * 0.01}px)`;
-            
+
             // Calculate closest card for haptic feedback
             const diff = Math.abs(mid - viewSize / 2);
             if (diff < minDiff) {
@@ -706,7 +708,7 @@ function initWorksTrack() {
         if (isMobile && currentCenterIdx !== window.lastHapticIdx) {
             if (window.lastHapticIdx !== undefined && Math.abs(vel) > 0.5) triggerHaptic();
             window.lastHapticIdx = currentCenterIdx;
-            
+
             // SYNCHRONIZATION: Update focus index so a single tap opens the project
             // if it's already centered and showing the title.
             if (Math.abs(vel) < 2) {
@@ -724,7 +726,7 @@ function initWorksTrack() {
 function initWorksList() {
     // Suppress the side list on the Work page specifically
     if (window.location.pathname.includes('/work/')) return;
-    
+
     const listContainer = document.querySelector('#work-list ul');
     if (!listContainer) return;
     listContainer.innerHTML = '';
@@ -738,13 +740,13 @@ function initWorksList() {
         const a = document.createElement('a');
         a.href = work.link.startsWith('http') ? work.link : basePath + work.link;
         if (work.link.startsWith('http')) a.target = '_blank';
-        
+
         // Add image for mobile (hidden on desktop via css)
         const coverImg = document.createElement('img');
         coverImg.src = basePath + 'covers/' + work.img;
         coverImg.className = 'mobile-work-cover';
         a.appendChild(coverImg);
-        
+
         const textSpan = document.createElement('span');
         textSpan.className = 'work-title';
         textSpan.textContent = work.title;
@@ -812,7 +814,7 @@ document.addEventListener('DOMContentLoaded', () => {
             window.removeEventListener('click', unlockAudio);
             window.removeEventListener('touchstart', unlockAudio);
             window.removeEventListener('wheel', unlockAudio);
-        }).catch(() => {});
+        }).catch(() => { });
     };
 
     window.addEventListener('click', unlockAudio);

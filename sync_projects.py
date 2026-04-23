@@ -24,13 +24,13 @@ def sync():
     
     # Define manual priority order
     PRIORITY = [
-        'echoes-of-presence',
         'clanx',
+        'echoes-of-presence',
+        'lunaring',
         'lectrixev',
         'unreasonablecube',
-        'lunaring',
-        'oneplus',
         'doodleforest',
+        'oneplus',
         'viewbuds'
     ]
     
@@ -60,6 +60,7 @@ def sync():
         tags_raw = extract_meta(content, 'project-tags')
         tags = [t.strip() for t in tags_raw.split(',')] if tags_raw else []
         description = extract_meta(content, 'project-description') or "Content coming soon."
+        external_link = extract_meta(content, 'project-link')
         
         # Consistent path for project-specific assets if found
         if not img:
@@ -75,7 +76,7 @@ def sync():
             "id": folder,
             "title": title,
             "img": img,
-            "link": f"{folder}/",
+            "link": external_link if external_link else f"{folder}/index.html",
             "tags": tags,
             "content": f"<h1>{title}</h1><p>{description}</p>"
         })

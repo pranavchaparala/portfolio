@@ -235,7 +235,7 @@ function initWorksTrack() {
         if (!isVertical) applyPositions();
     });
 
-    const selectedIds = [
+    const selectedIds = typeof carouselOrder !== 'undefined' ? carouselOrder : [
         'clanx',
         'echoes-of-presence',
         'lunaring',

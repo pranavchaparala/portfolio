@@ -27,7 +27,7 @@ def sync():
         'echoes-of-presence',
         'clanx',
         'unreasonablecube',
-        'lectrixev',
+        'lectrix-ev',
         'lunaring',
         'viewbuds',        
     ]
@@ -35,7 +35,7 @@ def sync():
     # 2. CAROUSEL PRIORITY (Order and selection for the Home page)
     CAROUSEL_PRIORITY = [
         
-        'lectrixev',
+        'lectrix-ev',
         'oneplus',
         'unreasonablecube',
         'viewbuds',

@@ -7,7 +7,7 @@ const getBasePath = () => {
     const p = window.location.pathname;
 
     // Explicit depth checks based on known subfolders
-    if (p.includes('/work/') || p.includes('/play/') || p.includes('/lectrixev/') ||
+    if (p.includes('/work/') || p.includes('/play/') || p.includes('/lectrix-ev/') ||
         p.includes('/clanx/') || p.includes('/oneplus/') || p.includes('/lunaring/') ||
         p.includes('/doodleforest/') || p.includes('/echoes-of-presence/') ||
         p.includes('/unreasonablecube/') || p.includes('/viewbuds/') ||
@@ -239,7 +239,7 @@ function initWorksTrack() {
         'clanx',
         'echoes-of-presence',
         'lunaring',
-        'lectrixev',
+        'lectrix-ev',
         'unreasonablecube',
         'doodleforest',
         'oneplus',

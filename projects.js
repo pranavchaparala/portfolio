@@ -34,10 +34,10 @@ const projectsData = [
         "content": "<h1>Unreasonable Cube</h1><p>A physical AI that maps challenges to multidimensional perspectives through tangible interaction.</p>"
     },
     {
-        "id": "lectrixev",
+        "id": "lectrix-ev",
         "title": "Lectrix EV",
         "img": "lectrix.png",
-        "link": "lectrixev/index.html",
+        "link": "lectrix-ev/index.html",
         "tags": [
             "Product Design",
             "Branding"
@@ -58,7 +58,7 @@ const projectsData = [
     {
         "id": "viewbuds",
         "title": "Viewbuds",
-        "img": "viewbuds.png",
+        "img": "echoesofpresence.png",
         "link": "viewbuds/index.html",
         "tags": [],
         "content": "<h1>Viewbuds</h1><p>Content coming soon.</p>"
@@ -110,4 +110,4 @@ const projectsData = [
         "content": "<h1>OnePlus OxygenOS 12</h1><p>Enhancing the Work-Life Balance feature and system services in OxygenOS 12 at OnePlus.</p>"
     }
 ];
-const carouselOrder = ["lectrixev", "oneplus", "unreasonablecube", "viewbuds", "clanx", "echoes-of-presence"];
+const carouselOrder = ["lectrix-ev", "oneplus", "unreasonablecube", "viewbuds", "clanx", "echoes-of-presence"];

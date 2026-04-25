@@ -247,22 +247,38 @@ function executeZoom({ clickedCard, title, description, videoFilename }) {
     if (mainHeader) mainHeader.style.opacity = '0.05'; // Faint but accessible
 
     if (videoFilename) {
-        const vid = document.createElement('video');
-        vid.src = `playgroundassets/${videoFilename}`;
-        vid.autoplay = true; vid.muted = window.isMuted; vid.loop = true; vid.playsInline = true;
-        vid.className = 'card-video';
-        vid.style.position = 'absolute'; vid.style.top = '0'; vid.style.left = '0';
-        vid.style.width = '100%'; vid.style.height = '100%'; vid.style.objectFit = 'cover';
-        vid.style.opacity = '0'; vid.style.transition = 'opacity 0.5s ease 0.5s'; vid.style.pointerEvents = 'none';
+        const isVideo = videoFilename.toLowerCase().endsWith('.mp4') || 
+                        videoFilename.toLowerCase().endsWith('.webm') || 
+                        videoFilename.toLowerCase().endsWith('.mov');
+        
+        const overlay = document.createElement(isVideo ? 'video' : 'img');
+        overlay.src = `playgroundassets/${videoFilename}`;
+        overlay.className = 'card-video';
+        overlay.style.position = 'absolute';
+        overlay.style.top = '0';
+        overlay.style.left = '0';
+        overlay.style.width = '100%';
+        overlay.style.height = '100%';
+        overlay.style.objectFit = 'cover';
+        overlay.style.opacity = '0';
+        overlay.style.transition = 'opacity 0.5s ease 0.5s';
+        overlay.style.pointerEvents = 'none';
 
-        clickedCard.appendChild(vid);
-        vid.play().catch(() => {
-            if (!vid.muted) {
-                vid.muted = true;
-                vid.play();
-            }
-        });
-        setTimeout(() => { vid.style.opacity = '1'; }, 100);
+        if (isVideo) {
+            overlay.autoplay = true;
+            overlay.muted = window.isMuted;
+            overlay.loop = true;
+            overlay.playsInline = true;
+            overlay.play().catch(() => {
+                if (!overlay.muted) {
+                    overlay.muted = true;
+                    overlay.play();
+                }
+            });
+        }
+
+        clickedCard.appendChild(overlay);
+        setTimeout(() => { overlay.style.opacity = '1'; }, 100);
     }
 }
 
@@ -286,10 +302,10 @@ function resetView() {
 
     const activeCards = document.querySelectorAll('.card.active-card');
     activeCards.forEach(card => {
-        const vids = card.querySelectorAll('video');
-        vids.forEach(v => {
-            v.style.opacity = '0';
-            setTimeout(() => v.remove(), 600);
+        const overlays = card.querySelectorAll('.card-video');
+        overlays.forEach(o => {
+            o.style.opacity = '0';
+            setTimeout(() => o.remove(), 600);
         });
         card.classList.remove('active-card');
     });

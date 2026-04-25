@@ -58,7 +58,7 @@ const projectsData = [
     {
         "id": "viewbuds",
         "title": "Viewbuds",
-        "img": "echoesofpresence.png",
+        "img": "viewbuds.png",
         "link": "viewbuds/index.html",
         "tags": [],
         "content": "<h1>Viewbuds</h1><p>Content coming soon.</p>"

@@ -106,8 +106,12 @@ const projectsData = [
         "title": "Permanence of Decay",
         "img": "permanenceofdecay.png",
         "link": "permanence-of-decay/index.html",
-        "tags": ["Creative Tech", "UX"],
-        "content": "<h1>Permanence of Decay</h1><p>Content coming soon.</p>"
+        "tags": [
+            "Physical Computing",
+            "Generative Design",
+            "Sound Synthesis"
+        ],
+        "content": "<h1>Permanence of Decay</h1><p>An interactive system of controlled erosion reconciling our relationship to digital past through bit rot.</p>"
     }
 ];
 const carouselOrder = ["lectrix-ev", "oneplus", "unreasonablecube", "viewbuds", "clanx", "echoes-of-presence"];

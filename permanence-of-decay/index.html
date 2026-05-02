@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,10 +8,15 @@
     <link rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="../project.css">
     <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
-    <meta name="project-img" content="lectrix.png">
+    <meta name="project-img" content="permanenceofdecay.png">
+    <meta name="project-tags" content="Physical Computing, Generative Design, Sound Synthesis">
+    <meta name="project-description" content="An interactive system of controlled erosion reconciling our relationship to digital past through bit rot.">
 </head>
+
 <body>
+
     <a href="../index.html" class="back-btn-center"><span>←</span> Go Back</a>
+
     <nav id="work-list">
         <span class="section-label">Work</span>
         <ul></ul>
@@ -19,47 +25,107 @@
         <main id="main-content">
             <div class="case-study-container" id="project-container">
                 <h1>Permanence of Decay</h1>
-                <p>Content coming soon.</p>
+                <p class="tagline">What happens when digital data is forced to age and transform like real memories?</p>
+                <p class="body-text">In response to a world of frictionless information and immortal storage, this project seeks to reconcile our relationship to the past through an interactive system of controlled erosion.</p>
+
+                <p class="body-text">This thesis imagines a future-computer interaction where the storage device is no longer a silent vault, but a physical body that erodes alongside the data it holds. While the hardware remains, the data within it possesses a finite metabolism—eventually fading until it is gone forever.</p>
+
+                <div class="meta-grid">
+                    <span class="meta-label">Year</span><span class="meta-value">2026</span>
+                    <span class="meta-label">Media</span><span class="meta-value">Physical Computing, Generative Design, Sound Synthesis</span>
+                    <span class="meta-label">Tools</span><span class="meta-value">TouchDesigner, Raspberry Pi, Node.js, Ableton Live</span>
+                </div>
+
+                <div class="full-img">
+                    <img src="../covers/permanenceofdecay.png" alt="Permanence of Decay Cover">
+                </div>
+
+                <hr>    
+                <h2>THE EROSION</h2>
+                
+                <p class="body-text">In this project, a recursive compression engine subjects personal data to the laws of entropy. While digital data is typically preserved flawlessly, this system forces it into a state of "bit rot"—the physical mechanism by which electrical charges leak and data corrupts.</p>
+
+                <p class="body-text">As the algorithms loop, they identify the edges of a face or a landscape and pull them apart into "ghost blocks" and falling pixel dust. This decay is not an error, but a material truth; the system holds onto these files, but it cannot keep them still. Slowly, the archive becomes a way to witness the weight of time through the steady accumulation of digital traces.</p>
+
+                <hr>
+                <h2>THE RITUAL</h2>
+                <p class="body-text">The installation consists of a high-fidelity physical console and a corresponding digital feedback loop that visualizes the archive's finite budget. The console uses physical controls to force a high-friction interaction, where keeping data alive requires constant, tactile attention.</p>
+
+                <div style="margin-top: 40px;">
+                    <span class="list-title">The Interface</span>
+                    <ul class="list-section">
+                        <li><b>Rotary Encoder (Damping):</b> Turning this encoder adds "digital friction" to slow the recompression cycle, signaling a desperate hold on the past.</li>
+                        <li><b>Secondary Buttons (Acceleration):</b> Allows visitors to intentionally corrupt data faster, embracing the ritual of destruction.</li>
+                        <li><b>QR Capture (The Seed):</b> Visitors contribute new photographs; however, every new upload accelerates the death of the oldest image in the archive.</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <span class="list-title">The Logic</span>
+                    <ul class="list-section">
+                        <li><b>Friction:</b> To remember is to work. The machine requires active physical effort to maintain an image's integrity.</li>
+                        <li><b>Soundscape:</b> An eerie audio loop shifts in pitch and "grit" to make the metabolic rate of the decay audible.</li>
+                        <li><b>The Purge:</b> At the conclusion of the exhibition, the system performs a final, irreversible wipe. The archive returns to zero.</li>
+                    </ul>
+                </div>
+
+                <div class="quote-box">
+                    "This interaction is not about control, but about maintenance. The machine forces us to acknowledge that to remember is to work."
+                </div>
+
+                <hr>
+                <h2>TOWARDS A NEW KIND OF FINALITY</h2>
+                <div class="body-text">
+                    <p class="body-text">Permanence of Decay is not about efficient storage, but about what happens when technology is designed to let go.</p>
+                    <p class="body-text">By shifting from "saving" to "witnessing," the project explores how our connection to history evolves when defined by loss. When an image fully decays, it is not "deleted" in the traditional sense; instead, its residual artifacts are permanently composited into the images beside it. It becomes part of something else—a process of transformation and haunting rather than simple disappearance.</p>
+                </div>
             </div>
         </main>
     </div>
+
     <div class="nav-rail" id="rail">
         <div id="scroll-indicator"></div>
         <div id="mini-map-content"></div>
     </div>
+
     <script src="../projects.js"></script>
     <script src="../cursor.js"></script>
     <script src="../components.js?v=2"></script>
+
     <script>
         const lenis = new Lenis({ duration: 1.2, lerp: 0.1 });
         function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
         requestAnimationFrame(raf);
+
         const mainContent = document.getElementById('main-content');
         const miniMap = document.getElementById('mini-map-content');
         const indicator = document.getElementById('scroll-indicator');
         const rail = document.getElementById('rail');
         miniMap.appendChild(mainContent.cloneNode(true));
+
         function syncLayout() {
             const pageHeight = mainContent.scrollHeight;
             const scaleFactor = rail.clientWidth / window.innerWidth;
-            miniMap.style.transform = "scale(" + scaleFactor + ")";
-            rail.style.height = Math.min(pageHeight * scaleFactor, window.innerHeight * 0.5) + "px";
-            indicator.style.height = (rail.clientHeight * (window.innerHeight / pageHeight)) + "px";
+            miniMap.style.transform = `scale(${scaleFactor})`;
+            rail.style.height = `${Math.min(pageHeight * scaleFactor, window.innerHeight * 0.5)}px`;
+            indicator.style.height = `${rail.clientHeight * (window.innerHeight / pageHeight)}px`;
         }
         const resizeObserver = new ResizeObserver(() => syncLayout());
         resizeObserver.observe(mainContent);
         window.addEventListener('load', () => { syncLayout(); setTimeout(syncLayout, 500); });
         window.addEventListener('resize', syncLayout);
         syncLayout();
+
         lenis.on('scroll', (e) => {
             const scrollPercent = e.progress;
-            indicator.style.transform = "translateY(" + (scrollPercent * (rail.clientHeight - indicator.clientHeight)) + "px)";
+            indicator.style.transform = `translateY(${scrollPercent * (rail.clientHeight - indicator.clientHeight)}px)`;
             const scaleFactor = rail.clientWidth / window.innerWidth;
             const scaledHeight = mainContent.scrollHeight * scaleFactor;
             if (scaledHeight > rail.clientHeight) {
-                miniMap.style.top = "-" + ((scaledHeight - rail.clientHeight) * scrollPercent) + "px";
+                miniMap.style.top = `-${(scaledHeight - rail.clientHeight) * scrollPercent}px`;
             }
         });
     </script>
 </body>
+
 </html>

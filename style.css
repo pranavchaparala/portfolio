@@ -177,7 +177,9 @@ body.loading-page footer {
     opacity: 0;
     pointer-events: auto;
     transition: opacity 0.3s, background 0.3s, border 0.3s;
-    /* default invisible */
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+    transform: translate3d(0,0,0);
 }
 
 .card.p {
@@ -200,6 +202,7 @@ body.loading-page footer {
     height: 100%;
     pointer-events: none;
     transition: opacity 0.3s;
+    will-change: transform;
 }
 
 .pan img {
@@ -417,19 +420,21 @@ body.page-loaded #active-project-title {
     width: 12px;
     height: 12px;
     position: fixed;
+    top: 0;
+    left: 0;
     pointer-events: none;
     z-index: 200001; /* Higher than the SVG path */
-    transform: translate(-50%, -50%);
     display: flex;
     align-items: center;
     justify-content: center;
+    will-change: transform;
 }
 
 .loader-rect {
     width: 12px;
     height: 12px;
     border: 1.5px solid black;
-    background: transparent;
+    background: rgba(0, 0, 0, 0.2);
     border-radius: 0px;
     transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1),
         height 0.3s cubic-bezier(0.16, 1, 0.3, 1),
@@ -437,7 +442,6 @@ body.page-loaded #active-project-title {
         background-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
         border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     position: absolute;
-    /* so it stays behind text */
 }
 
 body.loaded .loader-rect {
@@ -475,6 +479,8 @@ body.loaded .loader-rect {
 
 #cursor-hint {
     position: fixed;
+    top: 0;
+    left: 0;
     pointer-events: none;
     z-index: 300000;
     font-size: 10px;
@@ -485,9 +491,7 @@ body.loaded .loader-rect {
     mix-blend-mode: difference;
     white-space: nowrap;
     opacity: 0;
-    left: -9999px;
-    top: -9999px;
-    transform: translateY(-50%);
+    will-change: transform, opacity;
 }
 
 #cursor-hint.visible {
@@ -510,6 +514,7 @@ body.loaded .loader-rect {
     pointer-events: none;
     opacity: 1;
     transition: opacity 0.6s cubic-bezier(0.87, 0, 0.13, 1);
+    will-change: opacity;
 }
 
 body.page-loaded .page-transition-overlay {
@@ -970,6 +975,8 @@ body.page-leaving #gallery-wrap {
     transition: opacity 0.6s ease, visibility 0.6s;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+    will-change: opacity;
+    backface-visibility: hidden;
 }
 
 .about-modal.active {
@@ -981,6 +988,8 @@ body.page-leaving #gallery-wrap {
     width: 100%;
     max-width: 900px; /* Slightly wider to accommodate 3 columns */
     text-align: left;
+    will-change: transform, opacity;
+    transform: translate3d(0,0,0);
 }
 
 .about-content h1 {

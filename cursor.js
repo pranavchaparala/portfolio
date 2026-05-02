@@ -1,4 +1,4 @@
-window.onload = () => { document.body.classList.add('loaded'); };
+window.addEventListener('load', () => { document.body.classList.add('loaded'); });
 
 const basePathCursor = window.location.pathname.includes('/projects/') ? '../../' : './';
 
@@ -22,7 +22,7 @@ function initCursor() {
     const isPlay  = path.includes('/play/');
     const isHome  = !path.includes('/work/')  && !path.includes('/play/') &&
                     !path.includes('/about/') && !path.includes('/projects/') &&
-                    !path.match(/\/[a-z]+ev\/|\/clanx\/|\/lunaring\/|\/oneplus\/|\/unreasonable|\/doodle|\/echoes|\/viewbuds|\/gudz|\/inka|\/bezapp/);
+                    !path.match(/\/[a-z]+-ev\/|\/clanx\/|\/lunaring\/|\/oneplus\/|\/unreasonable|\/doodle|\/echoes|\/viewbuds|\/gudz|\/permanence-of-decay|\/bezapp/);
 
     const baseHintText = isPlay ? 'drag to explore' : (isHome ? 'scroll to explore' : null);
 
@@ -44,8 +44,7 @@ function initCursor() {
 
     if (baseHintText && hintEl) {
         hintEl.textContent = baseHintText;
-        hintEl.style.left  = `${mouse.x + 12}px`;
-        hintEl.style.top   = `${mouse.y}px`;
+        hintEl.style.transform = `translate3d(${mouse.x + 12}px, ${mouse.y}px, 0) translateY(-50%)`;
 
         setTimeout(() => { if (!isOverProject) hintEl.classList.add('visible'); }, 800);
         setTimeout(() => { hideExploreHint(); }, 5800);
@@ -59,28 +58,25 @@ function initCursor() {
         mouse.x = e.clientX;
         mouse.y = e.clientY;
         if (hintEl) {
-            hintEl.style.left = `${e.clientX + 12}px`;
-            hintEl.style.top  = `${e.clientY}px`;
+            hintEl.style.transform = `translate3d(${e.clientX + 12}px, ${e.clientY}px, 0) translateY(-50%)`;
         }
 
-        // Detect hover over carousel card or work grid item
-        const elements = document.elementsFromPoint(e.clientX, e.clientY);
-        const overProject = elements.some(el =>
-            el.classList.contains('project-img') ||
-            el.classList.contains('card') ||
-            el.classList.contains('grid-item') ||
-            el.closest('.grid-item')
-        );
+        // Optimization: Use event delegation instead of elementsFromPoint
+        // This is handled by a separate listener for better performance
+    });
+
+    // Efficient hover detection
+    const handleHover = (e) => {
+        const target = e.target.closest('.project-img, .card, .grid-item');
+        const overProject = !!target;
 
         if (overProject !== isOverProject) {
             isOverProject = overProject;
             if (hintEl) {
                 if (overProject) {
-                    // Switch to "open project" — always visible while hovering
                     hintEl.textContent = 'open project';
                     hintEl.classList.add('visible');
                 } else {
-                    // Restore base hint if still in explore window, else hide
                     if (!hintExpired && baseHintText) {
                         hintEl.textContent = baseHintText;
                         hintEl.classList.add('visible');
@@ -91,7 +87,9 @@ function initCursor() {
                 }
             }
         }
-    });
+    };
+
+    window.addEventListener('mouseover', handleHover);
 
     let points = Array.from({ length: 12 }, () => ({ x: mouse.x, y: mouse.y }));
 
@@ -103,8 +101,7 @@ function initCursor() {
             points[i].y += (points[i - 1].y - points[i].y) * 0.25;
         }
 
-        cursorSq.style.left = `${points[0].x}px`;
-        cursorSq.style.top  = `${points[0].y}px`;
+        cursorSq.style.transform = `translate3d(${points[0].x - 6}px, ${points[0].y - 6}px, 0)`;
 
         let d = `M ${points[0].x} ${points[0].y}`;
         for (let i = 1; i < 12; i++) d += ` L ${points[i].x} ${points[i].y}`;

@@ -58,7 +58,7 @@ const projectsData = [
     {
         "id": "viewbuds",
         "title": "Viewbuds",
-        "img": "viewbuds.png",
+        "img": "echoesofpresence.png",
         "link": "viewbuds/index.html",
         "tags": [],
         "content": "<h1>Viewbuds</h1><p>Content coming soon.</p>"
@@ -91,14 +91,6 @@ const projectsData = [
         "content": "<h1>Gudz</h1><p>Content coming soon.</p>"
     },
     {
-        "id": "inka",
-        "title": "Inka",
-        "img": "lectrix.png",
-        "link": "inka/index.html",
-        "tags": [],
-        "content": "<h1>Inka</h1><p>Content coming soon.</p>"
-    },
-    {
         "id": "oneplus",
         "title": "OnePlus OxygenOS 12",
         "img": "oneplus.png",
@@ -108,6 +100,14 @@ const projectsData = [
             "UI/UX"
         ],
         "content": "<h1>OnePlus OxygenOS 12</h1><p>Enhancing the Work-Life Balance feature and system services in OxygenOS 12 at OnePlus.</p>"
+    },
+    {
+        "id": "permanence-of-decay",
+        "title": "Permanence of Decay",
+        "img": "permanenceofdecay.png",
+        "link": "permanence-of-decay/index.html",
+        "tags": ["Creative Tech", "UX"],
+        "content": "<h1>Permanence of Decay</h1><p>Content coming soon.</p>"
     }
 ];
 const carouselOrder = ["lectrix-ev", "oneplus", "unreasonablecube", "viewbuds", "clanx", "echoes-of-presence"];

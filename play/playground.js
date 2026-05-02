@@ -59,7 +59,14 @@ function initGrid() {
     }
 
     grid.innerHTML = ''; 
-
+    
+    // Cache grid dimensions to avoid getBoundingClientRect in loop
+    window.addEventListener('resize', () => {
+        window.playgroundGridWidth = grid.offsetWidth;
+        window.playgroundGridHeight = grid.offsetHeight;
+    });
+    window.playgroundGridWidth = grid.offsetWidth;
+    window.playgroundGridHeight = grid.offsetHeight;
     for (let i = 0; i < totalCards; i++) {
         const card = document.createElement('div');
         card.className = 'card';
@@ -111,6 +118,8 @@ function initGrid() {
     // 2. Unlock Physics/Dragging (after expansion starts settling)
     setTimeout(() => { 
         isGridReady = true; 
+        window.playgroundGridWidth = grid.offsetWidth;
+        window.playgroundGridHeight = grid.offsetHeight;
     }, 1800);
 
     // 3. Unlock Card Clicking (The "Longer" Wait)
@@ -134,7 +143,6 @@ function updatePhysics() {
         return;
     }
 
-    // Grid interaction only allowed once isGridReady is true
     if (!isFocused && !isResetting && isGridReady) {
         if (!isDragging) {
             if (pendingZoomArgs) {
@@ -153,20 +161,23 @@ function updatePhysics() {
             targetY += velocityY;
         }
 
-        const gridRect = grid.getBoundingClientRect();
         const vW = window.innerWidth;
         const vH = window.innerHeight;
-
-        const limitX = Math.max(0, (gridRect.width - vW) / 2);
-        const limitY = Math.max(0, (gridRect.height - vH) / 2);
+        const limitX = Math.max(0, (window.playgroundGridWidth - vW) / 2);
+        const limitY = Math.max(0, (window.playgroundGridHeight - vH) / 2);
 
         targetX = Math.max(-limitX, Math.min(limitX, targetX));
         targetY = Math.max(-limitY, Math.min(limitY, targetY));
 
-        currentX += (targetX - currentX) * lerpAmount;
-        currentY += (targetY - currentY) * lerpAmount;
-
-        gridWrapper.style.transform = `translate3d(${currentX}px, ${currentY}px, 0px) scale(1)`;
+        const dx = targetX - currentX;
+        const dy = targetY - currentY;
+        
+        // Broaden the update condition to ensure it never freezes prematurely
+        if (isDragging || isFocused || isResetting || Math.abs(dx) > 0.01 || Math.abs(dy) > 0.01 || Math.abs(velocityX) > 0.01 || Math.abs(velocityY) > 0.01 || pendingZoomArgs) {
+            currentX += dx * lerpAmount;
+            currentY += dy * lerpAmount;
+            gridWrapper.style.transform = `translate3d(${currentX}px, ${currentY}px, 0px) scale(${isFocused ? 2.8 : 1})`;
+        }
     }
     requestAnimationFrame(updatePhysics);
 }

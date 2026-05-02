@@ -11,7 +11,7 @@ const getBasePath = () => {
         p.includes('/clanx/') || p.includes('/oneplus/') || p.includes('/lunaring/') ||
         p.includes('/doodleforest/') || p.includes('/echoes-of-presence/') ||
         p.includes('/unreasonablecube/') || p.includes('/viewbuds/') ||
-        p.includes('/gudz/') || p.includes('/bezapp/') || p.includes('/inka/')) {
+        p.includes('/gudz/') || p.includes('/bezapp/') || p.includes('/permanence-of-decay/')) {
         return '../';
     }
 
@@ -228,11 +228,14 @@ function initWorksTrack() {
     let VW = window.innerWidth;
     let VH = window.innerHeight;
 
+    let lastUpdateX = -999999;
     window.addEventListener('resize', () => {
         VW = window.innerWidth;
         VH = window.innerHeight;
         // Recalculate horizontal offsets if needed
-        if (!isVertical) applyPositions();
+        if (!isVertical) {
+            applyPositions(true);
+        }
     });
 
     const selectedIds = typeof carouselOrder !== 'undefined' ? carouselOrder : [
@@ -441,16 +444,21 @@ function initWorksTrack() {
     const heroMid = cardPos[heroIdx] + heroSize / 2;
     let offset = (isVertical ? VH : VW) / 2 - heroMid;
 
-    function applyPositions() {
-        if (isVertical) return; // Native CSS handles location!
+    function applyPositions(force = false) {
+        if (isVertical) return; 
+        
+        // Skip if offset hasn't changed much and not forced
+        if (!force && Math.abs(offset - lastUpdateX) < 0.1) return;
+        lastUpdateX = offset;
+
         cards.forEach((c, i) => {
             const cp = cardPos[i] + offset;
-            c.style.left = cp + 'px';
+            c.style.transform = `translate3d(${cp}px, 0, 0)`;
             const pan = c.querySelector('.pan');
-            if (pan) pan.style.transform = `translateX(${(cp + w(i % N) / 2 - VW / 2) * 0.01}px)`;
+            if (pan) pan.style.transform = `translate3d(${(cp + w(i % N) / 2 - VW / 2) * 0.01}px, 0, 0)`;
         });
     }
-    applyPositions();
+    applyPositions(true);
 
     heroCard.style.opacity = '1';
 
@@ -646,6 +654,9 @@ function initWorksTrack() {
             // NATIVE MOBILE Parallax & Hover calculations ONLY
             let closestCard = null;
             let minDiff = Infinity;
+            
+            // Optimization: avoid getBoundingClientRect inside loop if possible
+            // For vertical, we still need some intersection check, but we can throttle it
             cards.forEach((c, i) => {
                 const rect = c.getBoundingClientRect();
                 const mid = rect.top + rect.height / 2;
@@ -656,7 +667,7 @@ function initWorksTrack() {
                     closestCard = c;
                 }
                 const pan = c.querySelector('.pan');
-                if (pan) pan.style.transform = `translateY(${(mid - viewSize / 2) * 0.01}px)`;
+                if (pan) pan.style.transform = `translate3d(0, ${(mid - viewSize / 2) * 0.01}px, 0)`;
             });
 
             if (closestCard && isMobile) {
@@ -669,13 +680,20 @@ function initWorksTrack() {
                     bgBlur.style.opacity = '0.2';
                 }
             }
-            return; // completely halt GSAP math processing for vertical
+            return; 
         }
 
-        // FRICTION: Adjust the 0.88 to change how long the momentum lasts. 
-        // 0.85 is heavy, 0.95 is very slippery.
+        // --- HORIZONTAL LOOP OPTIMIZATION ---
         vel *= 0.88;
+        
+        // Sleep mode: stop updates if velocity is negligible and not interacting
+        const isInteracting = isMouseDown || window.isPanning;
+        if (Math.abs(vel) < 0.005 && !isInteracting && Math.abs(offset - lastUpdateX) < 0.1) {
+            return;
+        }
+        
         offset -= vel;
+        
         cards.forEach((c, i) => {
             let cp = cardPos[i] + offset;
             const size = w(i % N);
@@ -691,26 +709,24 @@ function initWorksTrack() {
             const size = w(i % N);
             const viewSize = VW;
             const mid = cp + size / 2;
-            c.style.left = cp + 'px';
-            // Vertical parallax completely removed for purely horizontal interaction
-            c.style.transform = 'translateY(0)';
+            
+            c.style.transform = `translate3d(${cp}px, 0, 0)`;
             const pan = c.querySelector('.pan');
-            if (pan) pan.style.transform = `translateX(${(mid - viewSize / 2) * 0.01}px)`;
+            if (pan) pan.style.transform = `translate3d(${(mid - viewSize / 2) * 0.01}px, 0, 0)`;
 
-            // Calculate closest card for haptic feedback
             const diff = Math.abs(mid - viewSize / 2);
             if (diff < minDiff) {
                 minDiff = diff;
                 currentCenterIdx = i;
             }
         });
+        
+        lastUpdateX = offset;
 
         if (isMobile && currentCenterIdx !== window.lastHapticIdx) {
             if (window.lastHapticIdx !== undefined && Math.abs(vel) > 0.5) triggerHaptic();
             window.lastHapticIdx = currentCenterIdx;
 
-            // SYNCHRONIZATION: Update focus index so a single tap opens the project
-            // if it's already centered and showing the title.
             if (Math.abs(vel) < 2) {
                 window.focusedMobileCardIndex = currentCenterIdx;
             }

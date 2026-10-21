@@ -2556,8 +2556,9 @@ body.page-leaving {
    Placed last so it overrides the ≤768 / ≤1024 rules above.
    ========================================= */
 
-/* Sidebar thumbnail lists (sidebar.js) — split view only */
-.sidebar-list {
+/* Sidebar lists + Resume / LinkedIn (sidebar.js) — split view only */
+.sidebar-list,
+.sidebar-links {
     display: none;
 }
 

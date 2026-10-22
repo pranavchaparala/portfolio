@@ -2858,16 +2858,14 @@ body.page-leaving {
         width: calc(100% - var(--split-nav-width));
     }
 
-    /* Floating card inside the right panel; fills it on scroll (.expanded) */
-    .modal-sheet,
-    .exp-modal-sheet {
-        width: calc(100% - 32px);
-        max-width: 100%;
-        height: calc(100vh - 32px);
-        margin-top: 16px;
-        border-radius: 12px;
+    /* Fills the right panel outright — no pop-up slide, no grow on scroll */
+    .modal-overlay,
+    .modal-overlay::before {
+        transition: none;
     }
 
+    .modal-sheet,
+    .exp-modal-sheet,
     .modal-overlay.expanded .modal-sheet,
     .modal-overlay.rail-active .modal-sheet {
         width: 100%;
@@ -2875,6 +2873,8 @@ body.page-leaving {
         height: 100vh;
         margin-top: 0;
         border-radius: 0;
+        transform: none;
+        transition: none;
     }
 
     body:has(.modal-overlay.expanded) header,

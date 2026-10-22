@@ -1,7 +1,8 @@
 /**
  * sidebar.js
  *
- * Split-view sidebar (627px – 890px, see style.css). Hidden at every other width.
+ * Split-view sidebar (627px – 890px, or up to 1366px on touch-only tablets;
+ * see style.css). Hidden everywhere else.
  *
  * - Projects / Experiments nav buttons act as tabs: they show / swap the thumbnail
  *   list in the sidebar and leave the right-hand view where it is. Home /
@@ -23,7 +24,10 @@
     var nav = document.getElementById('main-nav');
     if (!header || !nav || typeof projectsData === 'undefined') return;
 
-    var splitQuery = window.matchMedia('screen and (min-width: 627px) and (max-width: 890px)');
+    var splitQuery = window.matchMedia(
+        'screen and (min-width: 627px) and (max-width: 890px), ' +
+        'screen and (min-width: 891px) and (max-width: 1366px) and (hover: none) and (pointer: coarse)'
+    );
     var EXP_MEDIA_BASE = 'assets/experiments/';
     var RESUME_URL = 'https://drive.google.com/uc?export=download&id=1cpND1GMJiNTteY0yfT2CI8pOVJn2AvJp';
     var LINKEDIN_URL = 'https://linkedin.com/in/pranavchaparala';

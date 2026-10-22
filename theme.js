@@ -16,7 +16,7 @@
         root.setAttribute('data-theme', theme);
         localStorage.setItem(STORAGE_KEY, theme);
         syncToggleButtons(theme);
-        const color = theme === 'dark' ? '#000000' : '#F8F9FB';
+        const color = theme === 'dark' ? '#161618' : '#F8F9FB';
         document.querySelectorAll('meta[name="theme-color"]').forEach(m => m.setAttribute('content', color));
     }
 

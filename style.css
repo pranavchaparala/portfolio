@@ -69,11 +69,22 @@
     --underline-hover: rgba(28, 28, 30, 0.8);
     --badge-bg: rgba(28, 28, 30, 0.05);
     --separator: var(--text-faint);
+    /* Solid fill for active / primary controls (active nav, Resume pill, badges) */
+    --fill-inverse: var(--text-primary);
+    /* Project / experiment sheet, and the info cards on it */
+    --bg-sheet: var(--pill-bg);
+    --bg-sheet-card: var(--surface);
 }
 
 [data-theme="dark"] {
-    --page-bg: #000000;
-    --text-primary: #F5F5F7;
+    /* Charcoal, not pitch black — pure #000 with near-white text was too harsh */
+    --page-bg: #161618;
+    /* Active / primary fills a step down from the text colour so they don't glare */
+    --fill-inverse: #85858C;
+    /* Dark: sheet sits darker than its title bar and info cards */
+    --bg-sheet: var(--surface);
+    --bg-sheet-card: var(--pill-bg);
+    --text-primary: #E8E8ED;
     --text-secondary: #AEAEB2;
     --text-muted: #8E8E93;
     --text-faint: #636366;
@@ -124,7 +135,7 @@
     --popup-border: rgba(245, 245, 247, 0.08);
 
     --gradient-hero: linear-gradient(to bottom, var(--pill-bg), var(--surface));
-    --gradient-fade-top: linear-gradient(to bottom, #000000 0%, rgba(28, 28, 30, 0.9) 50%, rgba(28, 28, 30, 0) 100%);
+    --gradient-fade-top: linear-gradient(to bottom, #161618 0%, rgba(22, 22, 24, 0.9) 50%, rgba(22, 22, 24, 0) 100%);
     --hr-color: rgba(245, 245, 247, 0.1);
     --underline-subtle: rgba(245, 245, 247, 0.25);
     --underline-hover: rgba(245, 245, 247, 0.85);
@@ -139,7 +150,7 @@ html {
 
 html[data-theme="dark"] {
     color-scheme: dark;
-    background-color: #000000;
+    background-color: #161618;
 }
 
 /* Cross-document view transitions — browser captures old page, holds it
@@ -453,7 +464,7 @@ nav {
 @media (min-width: 1025px) {
     .nav-btn .count {
         display: inline-block;
-        background-color: var(--text-primary);
+        background-color: var(--fill-inverse);
         color: var(--text-on-inverse);
         padding: 2px 6px;
         font-size: 12px;
@@ -468,9 +479,9 @@ nav {
 }
 
 .nav-btn.active {
-    background-color: var(--text-primary);
+    background-color: var(--fill-inverse);
     color: var(--text-on-inverse);
-    border-color: var(--text-primary);
+    border-color: var(--fill-inverse);
 }
 
 .nav-btn.active .count {
@@ -986,7 +997,7 @@ body.page-entered .tagline-block::after {
 .meta-stack-block {
     flex: 1;
     min-width: 0;
-    background-color: var(--surface);
+    background-color: var(--bg-sheet-card);
     border-radius: 8px;
     padding: 8px;
     display: flex;
@@ -1370,7 +1381,7 @@ header {
 /* --- Modal Sheet Container --- */
 .modal-sheet {
     position: relative;
-    background-color: var(--pill-bg);
+    background-color: var(--bg-sheet);
     width: 70%;
     max-width: 1100px;
     height: calc(100vh - 130px);
@@ -1414,7 +1425,7 @@ header {
     min-height: 100%;
     display: flex;
     flex-direction: column;
-    background-color: var(--pill-bg);
+    background-color: var(--bg-sheet);
 }
 
 /* --- STICKY CONTROL SUB-NAV BAR --- */
@@ -1554,6 +1565,18 @@ header {
     display: block;
     margin-top: 24px;
     margin-bottom: 24px;
+}
+
+/* Long-scroll case studies (ClanX, Lectrix, …) read as one continuous
+   image — no gaps between stacked media, same as project.css */
+.modal-sheet .case-study-container.long-scroll img,
+.modal-sheet .case-study-container.long-scroll video,
+.modal-sheet .case-study-container.long-scroll .media-row,
+.modal-sheet #project-container.long-scroll img,
+.modal-sheet #project-container.long-scroll video,
+.modal-sheet #project-container.long-scroll .media-row {
+    margin-top: 0;
+    margin-bottom: 0;
 }
 
 .modal-sheet .case-study-container .meta-grid {
@@ -1752,9 +1775,9 @@ body.page-entering .nav-btn.active {
 }
 
 body.page-entered .nav-btn.active {
-    background-color: var(--text-primary);
+    background-color: var(--fill-inverse);
     color: var(--text-on-inverse);
-    border-color: var(--text-primary);
+    border-color: var(--fill-inverse);
     transition: background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
                 color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
                 border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1);
@@ -1918,7 +1941,7 @@ body.page-leaving {
 }
 
 .pill-dark {
-    background-color: var(--text-primary);
+    background-color: var(--fill-inverse);
     color: var(--bg-page);
 }
 
@@ -2259,7 +2282,7 @@ body.page-leaving {
 }
 
 .theme-btn-sm.active {
-    background-color: var(--text-primary);
+    background-color: var(--fill-inverse);
     color: var(--bg-page);
 }
 
@@ -2551,7 +2574,9 @@ body.page-leaving {
 
 }
 /* =========================================
-   SPLIT VIEW — tablets & Surface Duo (627px – 890px)
+   SPLIT VIEW — tablets & Surface Duo
+   627px – 890px any device, plus 891px – 1366px on touch-only screens
+   (iPad Air / Pro portrait + landscape) so laptops keep the desktop layout.
    Left 2/5: navigation sidebar. Right 3/5: page + project view.
    Placed last so it overrides the ≤768 / ≤1024 rules above.
    ========================================= */
@@ -2562,26 +2587,35 @@ body.page-leaving {
     display: none;
 }
 
-@media screen and (min-width: 627px) and (max-width: 890px) {
+@media screen and (min-width: 627px) and (max-width: 890px), screen and (min-width: 891px) and (max-width: 1366px) and (hover: none) and (pointer: coarse) {
     :root {
         --split-nav-width: clamp(208px, 30vw, 264px);
     }
 
     body {
-        padding: 24px 24px 24px calc(var(--split-nav-width) + 24px);
+        padding: 12px 12px 12px var(--split-nav-width);
+    }
+
+    /* Right side sits in a rounded container */
+    .page-content {
+        padding: 24px;
+        border: 1px solid var(--divider);
+        border-radius: 16px;
+        overflow: clip;
     }
 
     /* Header becomes a full-height left sidebar */
     header {
         top: 0;
         bottom: 0;
+        left: 0;
         right: auto;
         width: var(--split-nav-width);
         flex-direction: column;
         gap: 8px;
         /* no bottom padding: .sidebar-links supplies it so it can pin flush */
         padding: 24px 16px 0;
-        border-right: 1px solid var(--divider);
+        background-color: var(--page-bg);
         pointer-events: auto;
         overflow-y: auto;
         overscroll-behavior: contain;
@@ -2630,7 +2664,7 @@ body.page-leaving {
     }
 
     .sidebar-item.active {
-        background-color: var(--text-primary);
+        background-color: var(--fill-inverse);
         color: var(--text-on-inverse);
     }
 
@@ -2715,9 +2749,33 @@ body.page-leaving {
         padding: 10px 16px;
     }
 
+    /* Undo desktop (≥1025px) header rules for big tablets */
+    nav>.nav-btn {
+        width: 100% !important;
+        height: auto !important;
+        padding: 10px 16px !important;
+    }
+
+    body:has(.modal-overlay.expanded) header nav,
+    body:has(.modal-overlay.rail-active) header nav {
+        opacity: 1;
+        pointer-events: auto;
+        transform: none;
+    }
+
+    .modal-overlay.expanded .modal-project-title,
+    .modal-overlay.rail-active .modal-project-title {
+        margin-left: 0 !important;
+    }
+
+    .modal-right-progress-rail {
+        display: none;
+    }
+
     .nav-btn .count {
         display: inline-block !important;
-        background-color: var(--text-primary);
+        opacity: 1;
+        background-color: var(--fill-inverse);
         color: var(--text-on-inverse);
         padding: 2px 6px;
         font-size: 12px;
@@ -2741,14 +2799,14 @@ body.page-leaving {
     }
 
     nav.has-sidebar-tabs .nav-btn[data-sidebar-tab].active:not(.sidebar-tab-active) .count {
-        background-color: var(--text-primary);
+        background-color: var(--fill-inverse);
         color: var(--text-on-inverse);
     }
 
     nav.has-sidebar-tabs .nav-btn.sidebar-tab-active {
-        background-color: var(--text-primary);
+        background-color: var(--fill-inverse);
         color: var(--text-on-inverse);
-        border-color: var(--text-primary);
+        border-color: var(--fill-inverse);
     }
 
     nav.has-sidebar-tabs .nav-btn.sidebar-tab-active .count {
@@ -2787,6 +2845,20 @@ body.page-leaving {
 
     .page-title span {
         margin: 0 4px;
+    }
+
+    /* Experiments carousel bleeds to the content column's edges (the
+       sidebar on the left, the screen on the right), not under the sidebar */
+    .home-section--experiments {
+        margin-left: -24px;
+        margin-right: -24px;
+        padding-left: 24px;
+        padding-right: 24px;
+    }
+
+    .home-experiments-thumbs {
+        margin-left: -24px;
+        margin-right: -24px;
     }
 
     .home-projects-grid,
@@ -2847,15 +2919,36 @@ body.page-leaving {
         align-items: flex-start;
     }
 
-    /* Project / experiment modal fills the right 3/5, sidebar stays visible */
-    .modal-overlay {
+    /* Project / experiment view fills the same rounded container, sidebar stays visible */
+    .modal-overlay,
+    .modal-overlay::before {
+        top: 12px;
         left: var(--split-nav-width);
-        width: calc(100% - var(--split-nav-width));
+        width: calc(100% - var(--split-nav-width) - 12px);
+        height: calc(100% - 24px);
     }
 
+    .modal-overlay {
+        border: 1px solid var(--divider);
+        border-radius: 16px;
+        overflow: hidden;
+        background-color: var(--bg-sheet);
+    }
+
+    /* No scrim needed — the page behind is hidden; it only darkened the corners */
     .modal-overlay::before {
-        left: var(--split-nav-width);
-        width: calc(100% - var(--split-nav-width));
+        display: none;
+    }
+
+    /* Hide the page behind an open item so it can't peek through the 12px
+       gaps around the container (the overlay lives inside .page-content,
+       so it opts back in) */
+    body:has(.modal-overlay.active) .page-content {
+        visibility: hidden;
+    }
+
+    body:has(.modal-overlay.active) .modal-overlay.active {
+        visibility: visible;
     }
 
     /* Fills the right panel outright — no pop-up slide, no grow on scroll */
@@ -2870,10 +2963,13 @@ body.page-leaving {
     .modal-overlay.rail-active .modal-sheet {
         width: 100%;
         max-width: 100%;
-        height: 100vh;
+        height: 100%;
         margin-top: 0;
-        border-radius: 0;
+        /* Round the sheet itself: Safari doesn't clip a will-change child
+           to the overlay's radius. 15px = overlay's 16px minus its border. */
+        border-radius: 15px;
         transform: none;
+        will-change: auto;
         transition: none;
     }
 
@@ -2926,5 +3022,17 @@ body.page-leaving {
     .meta-stack-block,
     .meta-stack-block:first-child {
         flex: none;
+    }
+}
+
+/* Big tablets in split view: the right column is wide enough for more columns */
+@media screen and (min-width: 891px) and (max-width: 1366px) and (hover: none) and (pointer: coarse) {
+    .home-projects-grid,
+    .project-single-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .experiments-masonry {
+        grid-template-columns: repeat(3, 1fr);
     }
 }
